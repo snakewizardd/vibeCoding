@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  shiny-app:
+    build:
+      context: . # Build from the current directory where Dockerfile and app files are located
+      dockerfile: Dockerfile
+    ports:
+      - "4817:3838" # Map host port 80 to container port 3838
+    # To access the app on port 3838 directly, use:
+    # - "3838:3838"
+    restart: always # Automatically restart the container if it crashes
+

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHAT THE FUCK IS UP YOOOOOOO!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column; /* Arrange items vertically */
+      justify-content: center; /* Center main content block vertically */
+      align-items: center; /* Center main content block horizontally */
+      min-height: 100vh; /* Full viewport height */
+      font-family: 'Press Start 2P', cursive; /* Using a retro font */
+      position: relative; /* Needed for absolute positioning */
+      overflow: hidden; /* Hide anything that goes outside the viewport */
+
+      /* Trippy Background */
+      background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB); /* Multi-color gradient */
+      background-size: 400% 400%; /* Make background larger than viewport for animation */
+      animation: gradientAnimation 15s ease infinite; /* Apply animation */
+      color: #FFFFFF; /* Change default text color to white for contrast */
+    }
+
+    /* Import Google Font */
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    /* Keyframes for background animation */
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        z-index: 0; /* Ensure main content is below border text/pyramids */
+        padding: 20px; /* Add some padding */
+    }
+
+    .vertical-text-container {
+      display: flex;
+      flex-direction: column-reverse; /* Stack items vertically in reverse order (first item goes to the end) */
+      font-size: 8vw; /* Size of individual characters */
+      color: #FFFFFF; /* White text color for contrast */
+      line-height: 0.9; /* Reduce space between lines */
+      text-shadow: 4px 4px #FF00FF; /* Neon text shadow */
+      margin-bottom: 20px;
+    }
+
+    .vertical-text-container span {
+        /* No individual rotation needed */
+    }
+
+    /* Shiny Output Placeholders CSS */
+    /* These styles will apply to the content Shiny inserts */
+    #currentTimeOutputDiv { /* Style the container div */
+        font-size: 2vw;
+        margin-top: 10px;
+        color: #00FFFF; /* Neon Cyan color */
+        text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF, 0 0 15px #00FFFF, 0 0 20px #00FFFF; /* Neon glow effect */
+        animation: pulseGlow 1.5s infinite alternate; /* Apply pulse animation */
+        font-family: 'Press Start 2P', cursive;
+    }
+
+    #trippyMessageOutputDiv { /* Style the container div */
+        font-size: 1.5vw;
+        color: #FFFF00; /* Neon Yellow color */
+        text-shadow: 0 0 5px #FFFF00, 0 0 10px #FFFF00; /* Simpler glow */
+        animation: none; /* Don't pulse the message */
+        margin-top: 20px;
+        font-family: 'Press Start 2P', cursive;
+    }
+
+
+    /* Keyframes for pulse glow animation */
+    @keyframes pulseGlow {
+      0% {
+        opacity: 0.8;
+        text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF;
+      }
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+      }
+    }
+
+
+    .corner-pyramid {
+      position: absolute;
+      font-size: 5vw; /* Size of the pyramid symbol */
+      color: rgba(204, 204, 204, 0.5); /* Light grey with some transparency */
+      z-index: 1; /* Ensure they are on top */
+      text-shadow: 2px 2px 5px #000000; /* Add shadow for depth */
+    }
+
+    .corner-pyramid.top-left {
+      top: 20px;
+      left: 20px;
+    }
+
+    .corner-pyramid.top-right {
+      top: 20px;
+      right: 20px;
+    }
+
+    .corner-pyramid.bottom-left {
+      bottom: 20px;
+      left: 20px;
+    }
+
+    .corner-pyramid.bottom-right {
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .border-text {
+      position: absolute;
+      font-size: 3vw; /* Size of the border text */
+      color: rgba(204, 204, 204, 0.5); /* Light grey with some transparency */
+      font-weight: bold;
+      z-index: 1; /* Ensure they are on top */
+      white-space: nowrap; /* Prevent text from wrapping */
+      text-shadow: 2px 2px 5px #000000; /* Add shadow for depth */
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    .border-text.top {
+      top: 20px; /* Distance from the top edge */
+      left: 50%; /* Start at the horizontal center */
+      transform: translateX(-50%); /* Shift left by half its width to center */
+    }
+
+    .border-text.right {
+      right: 20px; /* Distance from the right edge */
+      top: 50%; /* Start at the vertical center */
+      transform: translateY(-50%) rotate(90deg); /* Shift up by half its height and rotate */
+      transform-origin: 50% 50%; /* Rotate around its own center */
+    }
+
+    .border-text.bottom {
+      bottom: 20px; /* Distance from the bottom edge */
+      left: 50%; /* Start at the horizontal center */
+      transform: translateX(-50%); /* Shift left by half its width to center */
+    }
+
+    .border-text.left {
+      left: 20px; /* Distance from the left edge */
+      top: 50%; /* Start at the vertical center */
+      transform: translateY(-50%) rotate(-90deg); /* Shift up by half its height and rotate */
+      transform-origin: 50% 50%; /* Rotate around its own center */
+    }
+
+  </style>
+  <!-- Required for htmlTemplate to work correctly with Shiny -->
+  {{ headContent() }}
+</head>
+<body>
+  <div class="main-content">
+      <!-- Main "YOOOOOOO" content -->
+      <div class="vertical-text-container">
+        <span>Y</span>
+        <span>O</span>
+        <span>O</span>
+        <span>O</span>
+        <span>O</span>
+        <span>O</span>
+        <span>O</span>
+        <span>O</span>
+      </div>
+      <!-- Shiny Output Placeholders -->
+      <!-- Shiny will insert the 'currentTime' output here -->
+      <div id="currentTimeOutputDiv">{{ currentTime }}</div>
+      <!-- Shiny will insert the 'trippyMessage' output here -->
+      <div id="trippyMessageOutputDiv">{{ trippyMessage }}</div>
+  </div>
+
+
+  <!-- Corner Pyramids -->
+  <div class="corner-pyramid top-left">▲</div>
+  <div class="corner-pyramid top-right">▲</div>
+  <div class="corner-pyramid bottom-left">▲</div>
+  <div class="corner-pyramid bottom-right">▲</div>
+
+  <!-- Border Text -->
+  <div class="border-text top">WHAT</div>
+  <div class="border-text right">THE</div>
+  <div class="border-text bottom">FUCK</div>
+  <div class="border-text left">IS UP</div>
+
+</body>
+</html>

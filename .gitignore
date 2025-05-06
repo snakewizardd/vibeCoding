@@ -1,1 +1,5 @@
 .DS_Store
+./second/shiny/rsconnect/
+./first/shiny/rsconnect/
+./second/.Rhistory
+./first/.Rhistory
