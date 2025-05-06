@@ -36,13 +36,24 @@
       100% { text-shadow: 0 0 10px #00FF00, 0 0 20px #00FF00, 0 0 30px #00FF00; }
     }
 
+     /* Anomaly Text Glow */
+     .anomaly-text {
+         text-shadow: 0 0 5px #FF00FF, 0 0 10px #FF00FF;
+         animation: pulseAnomaly 1s ease-in-out infinite alternate;
+     }
+     @keyframes pulseAnomaly {
+         0% { text-shadow: 0 0 5px #FF00FF; }
+         100% { text-shadow: 0 0 8px #FF00FF, 0 0 15px #FF00FF; }
+     }
+
+
     .app-container {
         display: grid;
-        /* Initial desktop layout: message top, sidebar left, map and network viz right (split vertically) */
+        /* Desktop layout: message top, sidebar left, main content (map + network) right */
         grid-template-areas:
             "message message"
-            "sidebar main-content"; /* Combine map and network into one main area */
-        grid-template-columns: 1fr 2fr; /* Sidebar 1 part, Main 2 parts */
+            "sidebar main-content";
+        grid-template-columns: minmax(250px, 350px) 1fr; /* Fixed-ish width sidebar, rest for main */
         grid-template-rows: auto 1fr; /* Message row height auto, second row fills remaining space */
         gap: 20px;
         width: 98%;
@@ -68,33 +79,37 @@
         display: flex;
         align-items: center;
         justify-content: center;
-         overflow: hidden; /* Prevent overflow */
-         text-overflow: ellipsis; /* Add ellipsis if text overflows */
-         white-space: nowrap; /* Keep text on one line */
+        overflow: hidden; /* Prevent overflow */
+        text-overflow: ellipsis; /* Add ellipsis if text overflows */
+        white-space: nowrap; /* Keep text on one line */
+        box-sizing: border-box;
+        color: #ffff00; /* Yellow */
+        font-style: normal; /* Remove italic */
     }
 
     .sidebar {
         grid-area: sidebar;
         display: flex;
-        flex-direction: column;
+        flex-direction: column; /* Stack panels vertically in sidebar */
         gap: 15px;
         padding-right: 10px;
         border-right: 2px solid #00FF00;
         overflow-y: auto; /* Add scroll to sidebar if needed */
-         box-sizing: border-box;
+        box-sizing: border-box;
     }
 
-     .main-content {
+    .main-content {
         grid-area: main-content;
         display: grid;
+        /* Stack map and network viz vertically on desktop */
         grid-template-areas:
             "map-area"
-            "network-viz-area"; /* Stack map and network viz vertically on desktop */
+            "network-viz-area";
         grid-template-rows: 2fr 1fr; /* Map takes 2 parts, Network Viz takes 1 part */
         gap: 15px; /* Gap between map and network viz */
         box-sizing: border-box;
         overflow: hidden; /* Hide overflow from grid gaps */
-     }
+    }
 
 
     .sidebar-panel {
@@ -102,43 +117,87 @@
         border: 2px solid #00FF00;
         box-shadow: 0 0 10px #00FF00;
         background-color: rgba(0, 255, 0, 0.08);
-        box-sizing: border-box;
+        box-sizing: border-border;
         width: 100%; /* Ensure panels take full width */
     }
 
     #currentTimeOutputDiv {
         font-size: clamp(0.8em, 1.5vw, 18px); /* Responsive font size */
         text-align: center;
+        color: #00ff00; /* Green */
+        font-weight: bold;
     }
 
     #locationInfoOutputDiv {
         font-size: clamp(0.7em, 1.3vw, 16px); /* Responsive font size */
         text-align: center;
         word-break: break-word;
+        color: #00ff00; /* Green */
+    }
+     #locationInfoOutputDiv p {
+          margin-bottom: 2px;
+          color: #00ff00; /* Green */
+          word-break: break-word; /* Ensure long coords/labels wrap */
+      }
+       #locationInfoOutputDiv p:last-child {
+           margin-bottom: 0; /* Remove bottom margin from last paragraph */
+       }
+
+
+    /* Removed controls-panel and button styles */
+
+
+     #anomalyLevelOutputDiv { /* Panel for anomaly level */
+          text-align: center;
+          font-size: clamp(0.8em, 1.5vw, 18px);
+          font-weight: bold;
+          color: #FF00FF; /* Neon pink */
+     }
+
+
+    #secondaryVizOutputDiv { /* Facts Panel */
+         font-size: clamp(0.6em, 0.9vw, 14px); /* Responsive font size */
+         flex-grow: 1; /* Allow facts to grow and take space in sidebar flex */
+         overflow-y: visible; /* Let the pre tag handle scroll */
+         line-height: 1.4;
+         box-sizing: border-box;
+         display: flex; /* Make inner div a flex container */
+         flex-direction: column; /* Stack header and pre tag */
+         height: 0; /* Important for flex-grow in a column */
     }
 
-    #secondaryVizOutputDiv { /* Facts */
-         font-size: clamp(0.6em, 0.9vw, 14px); /* Responsive font size */
-         flex-grow: 1; /* Allow facts to grow and take space if sidebar is a flex column */
-         overflow-y: auto;
-         line-height: 1.4;
-         white-space: pre-wrap;
-          box-sizing: border-box;
+    #secondaryVizOutputDiv div { /* The inner div wrapper created by uiOutput */
+        display: flex; /* Make inner div a flex container */
+        flex-direction: column; /* Stack header and pre tag */
+        height: 100%; /* Fill parent height */
     }
+
+
+    /* Tweak the pre tag within the facts panel */
+     #secondaryVizOutputDiv pre {
+         margin: 0; /* Remove default pre margin */
+         padding: 0; /* Remove default pre padding */
+         white-space: pre-wrap; /* Ensure wrapping */
+         word-break: break-word; /* Allow breaking long words */
+         flex-grow: 1; /* Allow pre to fill remaining space in its flex parent */
+         overflow-y: auto; /* Add internal scroll for pre if needed */
+         box-sizing: border-box;
+          color: #00FF00; /* Green */
+     }
+
 
     /* Container for the map */
     #map-area {
         grid-area: map-area;
         position: relative; /* Needed for leaflet */
          box-sizing: border-box;
-         overflow: hidden;
+         overflow: hidden; /* Hide map overflow */
     }
 
     #map { /* ID must match the leafletOutput ID in app.R */
         height: 100%; /* Fill parent container height */
         width: 100%; /* Ensure map takes full width */
         border: none; /* Remove border here, parent container handles it */
-        /*box-shadow: 0 0 20px #00FF00;*/ /* Moved glow to main container */
         background-color: rgba(0, 255, 0, 0.08); /* Match theme */
         position: relative; /* Needed for leaflet controls */
     }
@@ -152,16 +211,17 @@
         background-color: rgba(0, 255, 0, 0.08); /* Match theme */
         padding: 10px;
         box-sizing: border-box;
-         overflow: hidden; /* Hide drawing overflow */
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         justify-content: center;
+        overflow: hidden; /* Hide drawing overflow */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     #networkVizArea h3 {
         font-size: clamp(0.8em, 1vw, 16px);
         text-align: center;
+        margin-top: 0; /* Remove default margin */
         margin-bottom: 10px;
         color: #00cc00;
     }
@@ -270,6 +330,7 @@
             border-right: none;
              overflow-y: visible; /* Allow contents to dictate height, no internal scroll initially */
              height: auto; /* Auto height */
+             padding-bottom: 10px; /* Add space below sidebar on mobile */
         }
 
          .main-content {
@@ -299,13 +360,27 @@
             font-size: 0.9em;
         }
 
-        #secondaryVizOutputDiv { /* Facts */
+         #anomalyLevelOutputDiv {
+              font-size: 1em; /* Adjust font size */
+         }
+
+
+        /* Removed controls-panel mobile styles */
+
+
+        #secondaryVizOutputDiv { /* Facts Panel */
              font-size: 0.8em;
              max-height: 150px; /* Give facts a max height and scroll on mobile */
-             overflow-y: auto;
+             overflow-y: visible; /* Let the pre inside scroll */
              flex-grow: 0; /* Don't let it grow unbounded in height */
-             padding: 8px; /* Adjust padding for scroll */
+             height: auto; /* Auto height on mobile */
         }
+         #secondaryVizOutputDiv pre {
+              font-size: 0.7em; /* Smaller font inside pre on mobile */
+               overflow-y: auto; /* Enable scroll for pre */
+              max-height: 100%; /* Fill parent height */
+         }
+
 
         /* Ensure map height is respected */
         #map-area {
@@ -322,6 +397,10 @@
              min-height: 150px;
              padding: 8px;
         }
+         #networkVizArea h3 {
+             margin-bottom: 5px; /* Reduce header margin */
+         }
+
 
         /* Hide decorative elements on mobile */
         .bracket, .pulsating-dot {
@@ -333,13 +412,42 @@
     }
 
     /* Make Shiny outputs fill their containers */
-    .shiny-text-output, .shiny-html-output {
+    /* Add specific styling for Shiny output divs */
+    /* Targets the direct div created by Shiny around the output */
+    #shiny-text-output-currentTime,
+    #shiny-text-output-trippyMessage,
+    #shiny-html-output-locationInfo,
+    #shiny-text-output-anomalyLevel, /* Anomaly output */
+    #shiny-html-output-secondaryVisualization {
         display: block;
         width: 100%;
         box-sizing: border-box;
         margin-bottom: 0; /* Remove margin here, gaps handle spacing */
         padding: 0; /* Remove padding here, parent panels handle it */
+        /* Add flex properties if this is a container for internal elements */
+         display: flex;
+         flex-direction: column;
+         height: 100%; /* Assume parent has height */
     }
+    /* Style for the *actual content* inside the Shiny output divs */
+     #shiny-text-output-currentTime > *,
+     #shiny-text-output-trippyMessage > *,
+     #shiny-html-output-locationInfo > *,
+     #shiny-text-output-anomalyLevel > *,
+     #shiny-html-output-secondaryVisualization > * {
+         width: 100%; /* Ensure content fills the Shiny wrapper div */
+         box-sizing: border-box;
+         margin: 0; /* Reset default margins on content elements */
+         padding: 0; /* Reset default padding */
+     }
+
+     /* Specific styling for the pre tag within facts */
+      #shiny-html-output-secondaryVisualization pre {
+         flex-grow: 1; /* Allow pre to fill remaining space in its flex parent */
+         overflow-y: auto; /* Add internal scroll for pre if needed */
+         height: 0; /* Allow flex-grow to work */
+     }
+
 
     #shiny-text-output-currentTime {
          color: #00ff00; /* Green */
@@ -353,22 +461,34 @@
 
     #shiny-html-output-locationInfo p {
          margin-bottom: 2px;
-         color: #00ff00;
-    }
+         color: #00ff00; /* Green */
+         word-break: break-word; /* Ensure long coords/labels wrap */
+     }
+      #shiny-html-output-locationInfo p:last-child {
+          margin-bottom: 0; /* Remove bottom margin from last paragraph */
+      }
 
-    #shiny-html-output-secondaryVisualization div {
-         width: 100%;
-         box-sizing: border-box;
-    }
 
-    /* Tweak the pre tag within the facts viz for mobile */
-    @media (max-width: 768px) {
-        #secondaryVizOutputDiv pre {
-             font-size: 0.7em; /* Smaller font on mobile */
-        }
-         #locationInfoOutputDiv {
-             font-size: 0.8em;
-         }
+    #anomalyLevelOutputDiv { /* This is the outer div template provides */
+          text-align: center;
+          font-size: clamp(0.8em, 1.5vw, 18px);
+          font-weight: bold;
+          color: #FF00FF; /* Neon pink */
+     }
+     /* Style the actual text output inside */
+     #shiny-text-output-anomalyLevel {
+        color: #FF00FF; /* Apply color to the actual text output */
+        font-weight: bold;
+     }
+
+
+    /* Style the container for the facts output */
+    #secondaryVizOutputDiv {
+         /* Keep existing panel styles */
+         display: flex;
+         flex-direction: column;
+         height: 0; /* Required for flex-grow on content below */
+         flex-grow: 1;
     }
 
 
@@ -396,6 +516,11 @@
 
             <!-- locationInfo will be inserted here -->
             <div id="locationInfoOutputDiv" class="sidebar-panel glowing-text">{{ locationInfo }}</div>
+
+            <!-- Anomaly Level Panel -->
+            <div id="anomalyLevelOutputDiv" class="sidebar-panel anomaly-text">{{ anomalyLevel }}</div>
+
+            <!-- Removed Controls Panel -->
 
              <!-- secondaryVisualization (now facts) will be inserted here -->
             <div id="secondaryVizOutputDiv" class="sidebar-panel">{{ secondaryVisualization }}</div>
@@ -425,36 +550,60 @@
         // JavaScript for the Network Activity Visualization
 
         const canvas = document.getElementById('networkCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas ? canvas.getContext('2d') : null; // Check if canvas exists before getting context
 
         let nodes = [];
         let lines = [];
         const numNodes = 30; // Number of nodes in the network
         const maxLineDistance = 150; // Max distance for nodes to connect with a line
 
+        let animationFrameId = null; // To store the ID returned by requestAnimationFrame
+
         // Function to resize canvas to fit its container
         function resizeCanvas() {
-            const container = canvas.parentElement; // Get parent div
+            if (!canvas || !canvas.parentElement) {
+                console.error("Canvas or Canvas parent element not found!");
+                return; // Exit if parent is not found
+            }
+            const container = canvas.parentElement;
+            // Get the height of the header if it exists, plus its bottom margin
+            const header = container.querySelector('h3');
+            const headerHeight = header ? header.offsetHeight : 0;
+            const headerMarginBottom = header ? parseFloat(getComputedStyle(header).marginBottom) : 0;
+            const containerPadding = parseFloat(getComputedStyle(container).paddingTop) + parseFloat(getComputedStyle(container).paddingBottom);
+
             canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight - (container.querySelector('h3') ? container.querySelector('h3').offsetHeight + parseFloat(getComputedStyle(container).paddingTop) : 0); // Adjust height to exclude header height and container padding
+            // Subtract header height, its margin, and container padding from total height
+            canvas.height = container.clientHeight - headerHeight - headerMarginBottom - containerPadding;
+
+            // Recreate nodes for the new size if canvas has valid dimensions
+            if (canvas.width > 0 && canvas.height > 0) {
+                createNodes();
+            } else {
+                nodes = []; // Clear nodes if dimensions are invalid
+            }
         }
 
         // Create nodes
         function createNodes() {
             nodes = []; // Clear existing nodes
-            for (let i = 0; i < numNodes; i++) {
-                nodes.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 1, // Random velocity x
-                    vy: (Math.random() - 0.5) * 1, // Random velocity y
-                    radius: 2 // Node size
-                });
+            // Only create nodes if canvas has valid dimensions
+            if (canvas && canvas.width > 0 && canvas.height > 0) {
+                for (let i = 0; i < numNodes; i++) {
+                    nodes.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.8, // Slightly slower random velocity x
+                        vy: (Math.random() - 0.5) * 0.8, // Slightly slower random velocity y
+                        radius: 2 // Node size
+                    });
+                }
             }
         }
 
         // Draw nodes
         function drawNodes() {
+            if (!ctx || nodes.length === 0) return; // Don't draw if no context or nodes
             ctx.fillStyle = '#00FF00'; // Green nodes
             nodes.forEach(node => {
                 ctx.beginPath();
@@ -465,7 +614,7 @@
 
         // Draw lines between nearby nodes
         function drawLines() {
-            ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)'; // Semi-transparent green lines
+             if (!ctx || nodes.length === 0) return; // Don't draw if no context or nodes
             ctx.lineWidth = 1;
             lines = []; // Clear existing lines
 
@@ -478,9 +627,8 @@
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < maxLineDistance) {
-                         // Optional: make line opacity/width vary by distance
                          const opacity = 1 - (distance / maxLineDistance);
-                         ctx.strokeStyle = `rgba(0, 255, 0, ${opacity * 0.3})`;
+                         ctx.strokeStyle = `rgba(0, 255, 0, ${opacity * 0.4})`; /* Slightly higher opacity */
 
                         ctx.beginPath();
                         ctx.moveTo(node1.x, node1.y);
@@ -494,31 +642,37 @@
 
         // Update node positions and bounce off walls
         function updateNodes() {
+            if (nodes.length === 0) return; // Don't update if no nodes
             nodes.forEach(node => {
                 // Move node
                 node.x += node.vx;
                 node.y += node.vy;
 
                 // Bounce off horizontal walls
-                if (node.x < 0 || node.x > canvas.width) {
-                    node.vx *= -1;
-                    // Prevent sticking to the edge
-                    if (node.x < 0) node.x = 0;
-                    if (node.x > canvas.width) node.x = canvas.width;
+                if (node.x < 0) {
+                    node.x = 0; node.vx *= -1;
+                } else if (node.x > canvas.width) {
+                    node.x = canvas.width; node.vx *= -1;
                 }
 
                 // Bounce off vertical walls
-                if (node.y < 0 || node.y > canvas.height) {
-                    node.vy *= -1;
-                     // Prevent sticking to the edge
-                    if (node.y < 0) node.y = 0;
-                    if (node.y > canvas.height) node.y = canvas.height;
+                if (node.y < 0) {
+                     node.y = 0; node.vy *= -1;
+                } else if (node.y > canvas.height) {
+                     node.y = canvas.height; node.vy *= -1;
                 }
             });
         }
 
         // Animation loop
         function animate() {
+            // Only animate if canvas and context are available
+            if (!ctx || !canvas) {
+                animationFrameId = null; // Ensure ID is null
+                console.error("Canvas or context not available for animation.");
+                return; // Stop requesting frames
+            }
+
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -528,43 +682,37 @@
             drawNodes();
 
             // Request next frame
-            requestAnimationFrame(animate);
+            animationFrameId = requestAnimationFrame(animate);
         }
+
 
         // --- Initialization ---
 
-        // Resize and create nodes when the window loads and on resize
-        window.addEventListener('load', () => {
-             resizeCanvas(); // Initial size setup
-             createNodes(); // Create nodes based on initial size
-             animate(); // Start the animation loop
+        // Initialize everything once the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+             // Check if canvas and context are available before proceeding
+             if (canvas && canvas.parentElement && ctx) {
+                  resizeCanvas(); // Initial size setup and node creation
+                  // Start the animation loop
+                  if (animationFrameId === null) { // Prevent multiple animation loops
+                      animate();
+                  }
+             } else {
+                  console.error("Canvas, parent element, or 2D context not available on DOMContentLoaded.");
+             }
         });
 
+        // Resize canvas and recreate nodes on window resize
         window.addEventListener('resize', () => {
-             resizeCanvas(); // Resize canvas on window resize
-             createNodes(); // Recreate nodes for the new size to prevent issues
+             if (canvas && canvas.parentElement && ctx) {
+                 resizeCanvas(); // Resize canvas and recreate nodes
+                 // Animation continues if running
+             } else {
+                 console.error("Canvas, parent, or context not available on resize.");
+             }
         });
 
-        // Fallback in case load event doesn't fire as expected
-        // This helps ensure initialization happens
-         if (document.readyState === 'complete') {
-             resizeCanvas();
-             createNodes();
-             animate();
-         } else {
-            // If not complete, ensure listeners are attached and potentially trigger manually if ready
-            if (document.readyState !== 'loading') {
-                 // DOM is ready, but images/other resources might not be.
-                 // We can still try to initialize canvas here.
-                 // Check if canvas element exists before proceeding.
-                 if (canvas) {
-                     resizeCanvas();
-                     createNodes();
-                     animate();
-                 }
-            }
-         }
-
+        // Removed Shiny custom message handlers for pause/resume/button
 
     </script>
 
