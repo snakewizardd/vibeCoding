@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Winter Woofs</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif; /* A bit retro and fun */
+      line-height: 1.6;
+      margin: 0;
+      background: #81d4fa url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M50 0 L60 20 L80 20 L70 40 L90 50 L70 60 L80 80 L60 80 L50 100 L40 80 L20 80 L30 60 L10 50 L30 40 L20 20 L40 20 Z" fill="%23e1f5fe"/></svg>') repeat; /* Light blue background with snowflakes */
+      color: #263238; /* Dark bluish-grey */
+      display: flex; /* Use flexbox for the main layout */
+      min-height: 100vh; /* Make body at least viewport height */
+      box-sizing: border-box;
+      flex-direction: column; /* Stack header/footer and main content */
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      color: #01579b; /* Darker blue */
+      text-shadow: 3px 3px #b3e5fc; /* Fun retro text shadow */
+      margin-bottom: 20px;
+    }
+     header h1 {
+      font-size: 3em;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    header p {
+      font-size: 1.2em;
+      margin-top: 5px;
+      color: #0288d1; /* Blue */
+    }
+
+    .main-layout {
+      display: flex; /* Flexbox for side-by-side layout */
+      flex-grow: 1; /* Allows this section to take up remaining space */
+      padding: 0 20px; /* Add some padding on the sides */
+      gap: 20px; /* Space between columns */
+      align-items: flex-start; /* Align items to the top */
+    }
+
+    .fact-section {
+      flex-basis: 25%; /* Allocate space for fact sections */
+      flex-grow: 1; /* Allow fact sections to grow */
+      padding: 20px;
+      background-color: rgba(179, 229, 252, 0.9); /* Light blue with opacity */
+      border: 4px solid #03a9f4; /* Cyan blue border */
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+      text-align: left;
+      box-sizing: border-box;
+      min-width: 200px; /* Prevent sections from becoming too narrow */
+    }
+
+    .center-image {
+      flex-basis: 50%; /* Allocate space for the image */
+      flex-grow: 0; /* Prevent image column from growing */
+      flex-shrink: 0; /* Prevent image column from shrinking */
+      padding: 20px;
+      background-color: rgba(225, 245, 254, 0.9); /* Very light blue with opacity */
+      border: 4px solid #4fc3f7; /* Medium blue border */
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.1);
+      text-align: center;
+      box-sizing: border-box;
+      display: flex; /* Use flexbox to center image vertically */
+      align-items: center;
+      justify-content: center;
+    }
+
+    .center-image img {
+      max-width: 100%;
+      max-height: calc(100vh - 180px); /* Adjust max-height based on viewport to prevent scrolling */
+      height: auto;
+      display: block;
+      border: 4px solid #b3e5fc; /* Light blue border for image */
+      box-sizing: border-box;
+    }
+
+     .fact-section h2 {
+      color: #01579b; /* Darker blue */
+      margin-top: 0;
+      border-bottom: 3px solid #e1f5fe; /* Very light blue underline */
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px #4fc3f7; /* Text shadow */
+    }
+    .fact-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .fact-section li {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2303a9f4" width="18px" height="18px"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') no-repeat left center; /* Checkmark icon */
+      background-size: 18px 18px;
+      padding-left: 30px;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding: 10px;
+      color: #555;
+      font-size: 1em;
+      text-shadow: 1px 1px #e1f5fe;
+      text-align: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .main-layout {
+            flex-direction: column; /* Stack content vertically on smaller screens */
+            align-items: center;
+            padding: 0 10px;
+        }
+        .fact-section, .center-image {
+            flex-basis: auto; /* Remove fixed basis */
+            width: 95%; /* Take most of the width */
+        }
+         .center-image img {
+             max-height: auto; /* Remove max-height restriction when stacked */
+         }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Retro Winter Woofs</h1>
+    <p>Cool Facts About Totally Awesome Dogs!</p>
+  </header>
+
+  <div class="main-layout">
+    <div class="fact-section">
+      <h2>Super Husky Facts</h2>
+      <ul>
+        <li>Huskies are like furry energy drinks - always on the go!</li>
+        <li>They're masters of disguise and escape, like tiny Houdinis of the dog world.</li>
+        <li>Warning: a bored Husky equals a creative interior decorator (of your stuff!).</li>
+        <li>These dudes are seriously strong and fast, built for chilly adventures.</li>
+        <li>They rock a cool, wolf-like look that's totally tubular.</li>
+        <li>Check out those eyes! Often bright blue, or even one of each color - wild!</li>
+        <li>Even though they're work dogs, they're total party animals and love to play.</li>
+      </ul>
+    </div>
+
+    <div class="center-image">
+      <!-- INSERT YOUR IMAGE TAG BELOW THIS LINE -->
+      <img src="./pups.png" alt="Husky and Chihuahua Playing">
+      <!-- INSERT YOUR IMAGE TAG ABOVE THIS LINE -->
+    </div>
+
+    <div class="fact-section">
+      <h2>Chihuahua Power Facts</h2>
+      <ul>
+        <li>Chihuahuas: Tiny package, maximum attitude and loyalty!</li>
+        <li>These pint-sized pups are usually under 6 pounds, but they act like giants.</li>
+        <li>Don't let the size fool you, they've got personality for days!</li>
+        <li>They often stick to one person like glue - your personal tiny bodyguard.</li>
+        <li>Chis are surprisingly tough and often live a long, happy life.</li>
+        <li>Apple head or deer head? Both styles are awesome!</li>
+        <li>They might shiver, but that's just their body's way of staying warm or showing excitement!</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Retro Woofs Inc.</p>
+  </footer>
+</body>
+</html>

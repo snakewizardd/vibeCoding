@@ -1,5 +1,6 @@
 .DS_Store
-./second/shiny/rsconnect/
-./first/shiny/rsconnect/
+/second/shiny/rsconnect/
+/first/shiny/rsconnect/
 ./second/.Rhistory
-./first/.Rhistory
+./first/.Rhistory 
+/blog/backend/app/__pycache__/

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: nginx:alpine # Simple web server for static files
+    container_name: retrojournal_frontend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro # Mount HTML, CSS, JS
+      # We might need a simple nginx.conf if we want to proxy API calls
+      # or just handle CORS in the backend and call API directly from frontend JS
+    ports:
+      - "8080:80" # Access frontend at http://localhost:8080
+    depends_on:
+      - backend # Optional, but good if frontend needs to ensure backend is somewhat up
+
+  backend:
+    build: ./backend # Path to the directory containing the Dockerfile
+    container_name: retrojournal_backend
+    ports:
+      - "8001:8000" # Expose API on host port 8000
+    volumes:
+      - ./backend/app:/app/app # Mount app code for live reload with uvicorn --reload
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-retro_journal_db}
+      - DB_HOST=db # Service name of the postgres container
+      - DB_PORT=5432
+      # - WATCHFILES_FORCE_POLLING=true # May be needed on some systems for --reload to work in Docker
+    depends_on:
+      db:
+        condition: service_healthy # Wait for DB to be healthy
+    networks:
+      - journal_net
+
+  db:
+    image: postgres:15-alpine # Use a specific version
+    container_name: retrojournal_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${POSTGRES_DB:-retro_journal_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data
+    ports:
+      - "54321:5432" # Expose Postgres on host port 54321 (for direct DB access if needed)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-retro_journal_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - journal_net
+
+volumes:
+  postgres_data: # Defines the named volume for data persistence
+
+networks:
+  journal_net:
+    driver: bridge

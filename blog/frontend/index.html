@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroJournal // LOCALHOST</title>
+    <style>
+        /* --- CONFIGURABLE THEME VARIABLES --- */
+        :root {
+            --bg-color: #0d0d0d; /* Dark background */
+            --primary-text-color: #00ff41; /* Bright green */
+            --secondary-text-color: #33ff77; /* Slightly dimmer green */
+            --border-color: #00cc33;
+            --accent-color: #ff00ff; /* A contrasting accent for fun */
+            --cursor-color: var(--primary-text-color);
+            --button-bg: transparent;
+            --button-text: var(--primary-text-color);
+            --button-hover-bg: var(--primary-text-color);
+            --button-hover-text: var(--bg-color);
+            --font-family-mono: 'Consolas', 'Menlo', 'Courier New', 'Courier', monospace;
+            --scanline-opacity: 0.07;
+            --window-glow-color: rgba(0, 255, 65, 0.2);
+        }
+
+        /* --- BASE STYLES & RESET --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-mono);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- SCANLINE EFFECT --- */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0, var(--scanline-opacity)),
+                rgba(0,0,0, var(--scanline-opacity)) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- TERMINAL WINDOW STYLING --- */
+        .terminal-window {
+            width: 100%;
+            max-width: 900px;
+            border: 2px solid var(--border-color);
+            background-color: rgba(10, 10, 10, 0.85);
+            box-shadow: 0 0 25px var(--window-glow-color),
+                        inset 0 0 5px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            animation: fadeInTerminal 0.5s ease-out;
+        }
+
+        @keyframes fadeInTerminal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-bar {
+            background-color: var(--border-color);
+            color: var(--bg-color);
+            padding: 5px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+
+        .title-bar .title {
+            text-transform: uppercase;
+        }
+
+        .window-controls span {
+            margin-left: 8px;
+            cursor: default;
+        }
+
+        .content-area {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 100px); /* Adjust based on title bar and status bar height */
+            overflow-y: auto; /* Enable scroll for content area if it overflows */
+        }
+
+        /* --- FORM STYLING --- */
+        #journalForm {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            /* flex-grow: 1; Removed to allow space for entry list */
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--primary-text-color);
+            display: flex;
+            align-items: center;
+        }
+        .input-group label::before {
+            content: '>';
+            margin-right: 8px;
+            animation: blinkPrompt 1.5s infinite steps(1, end);
+        }
+
+        @keyframes blinkPrompt {
+            50% { opacity: 0.3; }
+        }
+
+        input[type="text"],
+        textarea {
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid var(--secondary-text-color);
+            color: var(--primary-text-color);
+            font-family: var(--font-family-mono);
+            padding: 10px;
+            font-size: 1rem;
+            caret-color: var(--cursor-color);
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: var(--primary-text-color);
+            box-shadow: 0 0 10px var(--window-glow-color);
+        }
+
+        textarea {
+            min-height: 150px; /* Reduced height to make space for list */
+            /* flex-grow: 1; No longer needed if form isn't flex-grow 1 */
+            line-height: 1.8;
+        }
+
+        /* --- BUTTON STYLING --- */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            /* margin-top: auto; Removed for fixed position */
+            padding-top: 10px;
+        }
+
+        .btn {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 2px solid var(--border-color);
+            padding: 10px 20px;
+            font-family: var(--font-family-mono);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            text-shadow: 0 0 3px var(--button-text);
+        }
+
+        .btn:hover, .btn:focus {
+            background-color: var(--button-hover-bg);
+            color: var(--button-hover-text);
+            box-shadow: 0 0 10px var(--button-hover-bg);
+            outline: none;
+            transform: translateY(-1px);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary { /* Save/Update button */ }
+        .btn-secondary { /* Reset button */
+            border-color: var(--secondary-text-color);
+            color: var(--secondary-text-color);
+            text-shadow: 0 0 3px var(--secondary-text-color);
+        }
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: var(--secondary-text-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--secondary-text-color);
+        }
+        .btn-danger { /* Delete button */
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            text-shadow: 0 0 3px var(--accent-color);
+        }
+        .btn-danger:hover, .btn-danger:focus {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+
+        /* --- PREVIOUS ENTRIES LIST STYLING --- */
+        #previousEntriesSection {
+            margin-top: 30px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+        }
+        #previousEntriesSection h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--primary-text-color);
+        }
+        #previousEntriesSection h2::before {
+            content: 'ARCHIVE:> ';
+            opacity: 0.7;
+        }
+        #journalEntriesList {
+            list-style: none;
+            padding: 0;
+            max-height: 300px; /* Limit height and make scrollable */
+            overflow-y: auto;
+            border: 1px solid var(--secondary-text-color);
+            padding: 10px;
+            background-color: rgba(0,0,0,0.2);
+        }
+        .entry-item {
+            background-color: rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--secondary-text-color);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .entry-item:last-child {
+            border-bottom: none;
+        }
+        .entry-item:hover {
+            background-color: rgba(0, 255, 65, 0.05);
+        }
+        .entry-item-info {
+            flex-grow: 1;
+        }
+        .entry-item-title {
+            font-weight: bold;
+            display: block;
+        }
+        .entry-item-date {
+            font-size: 0.8rem;
+            color: var(--secondary-text-color);
+            display: block;
+        }
+        .entry-item-actions button {
+            margin-left: 10px;
+            padding: 5px 10px; /* Smaller buttons for actions */
+            font-size: 0.85rem;
+        }
+
+
+        /* --- STATUS BAR --- */
+        .status-bar {
+            padding: 8px 10px;
+            background-color: rgba(0,0,0,0.2);
+            border-top: 1px dashed var(--secondary-text-color);
+            font-size: 0.85rem;
+            color: var(--secondary-text-color);
+            margin-top: 20px; /* Ensure space even if content-area is not full */
+            user-select: none;
+            text-align: right;
+            /* Make status bar stick to bottom of terminal-window */
+            margin-top: auto; /* Pushes status bar to bottom of flex container */
+        }
+        .status-bar .connection-status {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* --- UTILITY --- */
+        .sr-only { /* Screen-reader only */
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-window">
+        <header class="title-bar">
+            <span class="title">RetroJournal v0.2 :: LOCALHOST</span>
+            <div class="window-controls">
+                <span class="control minimize">_</span>
+                <span class="control maximize">[]</span>
+                <span class="control close">X</span>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <form id="journalForm">
+                <input type="hidden" id="editingEntryId" value=""> <!-- To store ID of entry being edited -->
+
+                <div class="input-group">
+                    <label for="journalTitle">Journal Title</label>
+                    <span class="sr-only">Enter Journal Title</span>
+                    <input type="text" id="journalTitle" name="journalTitle" placeholder="System.Log.Subject..." required>
+                </div>
+
+                <div class="input-group">
+                    <label for="journalEntry">Your Thoughts</label>
+                    <span class="sr-only">Enter Journal Entry</span>
+                    <textarea id="journalEntry" name="journalEntry" placeholder="Booting consciousness...\nBegin data stream...\n\n" required></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="saveButton" class="btn btn-primary">[ SAVE_SESSION ]</button>
+                    <button type="button" id="resetButton" class="btn btn-secondary">[ FLUSH_BUFFER ]</button>
+                </div>
+            </form>
+
+            <section id="previousEntriesSection">
+                <h2>Stored Logs</h2>
+                <ul id="journalEntriesList">
+                    <!-- Entries will be populated here by JavaScript -->
+                    <li class="loading-message">Loading previous entries...</li>
+                </ul>
+            </section>
+        </main>
+        <footer class="status-bar">
+            <span id="dateTime"></span> | <span class="connection-status">SECURE_CHANNEL::ESTABLISHED</span> | SYS_STATUS: OK
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8001/api/entries'; // Backend API URL
+
+        const journalForm = document.getElementById('journalForm');
+        const journalTitleInput = document.getElementById('journalTitle');
+        const journalEntryTextarea = document.getElementById('journalEntry');
+        const editingEntryIdInput = document.getElementById('editingEntryId');
+        const saveButton = document.getElementById('saveButton');
+        const resetButton = document.getElementById('resetButton');
+        const journalEntriesList = document.getElementById('journalEntriesList');
+        const statusBar = document.querySelector('.status-bar');
+        const connectionStatusEl = statusBar.querySelector('.connection-status');
+
+        // --- Form State & UI Update ---
+        function setFormForNewEntry() {
+            journalForm.reset();
+            editingEntryIdInput.value = '';
+            saveButton.textContent = '[ SAVE_SESSION ]';
+            journalTitleInput.focus();
+        }
+
+        resetButton.addEventListener('click', () => {
+            setFormForNewEntry();
+            updateStatus("Buffer flushed. Ready for new entry.", "SECURE_CHANNEL::ESTABLISHED", false);
+        });
+        
+        function updateStatus(message, connectionText, isError = false) {
+            console.log(isError ? "Error:" : "Status:", message);
+            if (connectionStatusEl) {
+                connectionStatusEl.textContent = connectionText;
+                connectionStatusEl.style.color = isError ? "var(--accent-color)" : "var(--accent-color)"; // Or specific error color
+            }
+             // Optional: Revert status bar after a delay for non-error messages
+            if (!isError) {
+                setTimeout(() => {
+                    if (connectionStatusEl.textContent === connectionText) { // Only revert if not changed by another message
+                         connectionStatusEl.textContent = "SECURE_CHANNEL::ESTABLISHED";
+                    }
+                }, 3000);
+            }
+        }
+
+
+        // --- Date/Time Update ---
+        function updateDateTime() {
+            const dateTimeEl = document.getElementById('dateTime');
+            if (dateTimeEl) {
+                const now = new Date();
+                const dateString = now.toLocaleDateString(undefined, {year: '2-digit', month: '2-digit', day: '2-digit'});
+                const timeString = now.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+                dateTimeEl.textContent = `${dateString} ${timeString}`;
+            }
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // --- Placeholder Enhancement (Optional) ---
+        const initialPlaceholder = "Booting consciousness...\nBegin data stream...\n\n";
+        if (journalEntryTextarea) {
+            journalEntryTextarea.addEventListener('focus', function() {
+                if (this.value === '' && this.placeholder === initialPlaceholder) {
+                    // this.placeholder = ''; // Optionally clear while typing, or leave for effect
+                }
+            });
+            journalEntryTextarea.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.placeholder = initialPlaceholder;
+                }
+            });
+        }
+
+        // --- Fetch and Display Entries ---
+        async function fetchAndDisplayEntries() {
+            updateStatus("Fetching logs...", "CONNECTING_ARCHIVE...", false);
+            try {
+                const response = await fetch(API_BASE_URL);
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                const entries = await response.json();
+                journalEntriesList.innerHTML = ''; // Clear loading message or old entries
+
+                if (entries.length === 0) {
+                    journalEntriesList.innerHTML = '<li>No entries found in archive.</li>';
+                } else {
+                    entries.forEach(entry => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('entry-item');
+                        listItem.dataset.id = entry.id;
+
+                        const entryDate = new Date(entry.created_at).toLocaleString(undefined, {
+                            year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+
+                        listItem.innerHTML = `
+                            <div class="entry-item-info">
+                                <span class="entry-item-title">${entry.title}</span>
+                                <span class="entry-item-date">Created: ${entryDate}</span>
+                            </div>
+                            <div class="entry-item-actions">
+                                <button class="btn btn-secondary btn-load" data-id="${entry.id}">[ LOAD ]</button>
+                                <button class="btn btn-danger btn-delete" data-id="${entry.id}">[ DELETE ]</button>
+                            </div>
+                        `;
+                        journalEntriesList.appendChild(listItem);
+                    });
+                }
+                updateStatus("Logs loaded.", "ARCHIVE_SYNC_OK", false);
+            } catch (error) {
+                console.error('Failed to fetch entries:', error);
+                journalEntriesList.innerHTML = '<li>Error loading entries. Check connection.</li>';
+                updateStatus("Failed to load logs.", "ARCHIVE_CONNECTION_ERROR", true);
+            }
+        }
+
+        // --- Load Entry for Editing ---
+        async function loadEntryForEditing(entryId) {
+            updateStatus(`Loading entry ID: ${entryId}...`, "FETCHING_DATA...", false);
+            try {
+                const response = await fetch(`${API_BASE_URL}/${entryId}`);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch entry: ${response.statusText}`);
+                }
+                const entry = await response.json();
+                journalTitleInput.value = entry.title;
+                journalEntryTextarea.value = entry.content;
+                editingEntryIdInput.value = entry.id;
+                saveButton.textContent = '[ UPDATE_SESSION ]';
+                journalTitleInput.focus();
+                updateStatus(`Entry "${entry.title}" loaded for editing.`, "DATA_LOADED_OK", false);
+            } catch (error) {
+                console.error('Error loading entry:', error);
+                alert(`Error loading entry: ${error.message}`);
+                updateStatus("Error loading entry.", "FETCH_ERROR", true);
+            }
+        }
+
+        // --- Delete Entry ---
+        async function deleteEntry(entryId) {
+            if (!confirm('SYSTEM_CONFIRMATION: Permanently delete this journal entry? This action cannot be undone.')) {
+                return;
+            }
+            updateStatus(`Deleting entry ID: ${entryId}...`, "SENDING_DELETE_CMD...", false);
+            try {
+                const response = await fetch(`${API_BASE_URL}/${entryId}`, { method: 'DELETE' });
+                if (!response.ok) { // 204 No Content is also OK
+                    if (response.status === 204) {
+                        // Successfully deleted
+                    } else {
+                       const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                       throw new Error(errorData.detail || `HTTP error ${response.status}`);
+                    }
+                }
+                updateStatus(`Entry ID: ${entryId} deleted.`, "DELETE_CMD_OK", false);
+                fetchAndDisplayEntries(); // Refresh list
+                if (editingEntryIdInput.value === entryId.toString()) { // If deleted entry was being edited
+                    setFormForNewEntry();
+                }
+            } catch (error) {
+                console.error('Error deleting entry:', error);
+                alert(`Error deleting entry: ${error.message}`);
+                updateStatus("Error deleting entry.", "DELETE_CMD_FAIL", true);
+            }
+        }
+
+        // Event delegation for load and delete buttons
+        journalEntriesList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('btn-load')) {
+                const entryId = event.target.dataset.id;
+                loadEntryForEditing(entryId);
+            }
+            if (event.target.classList.contains('btn-delete')) {
+                const entryId = event.target.dataset.id;
+                deleteEntry(entryId);
+            }
+        });
+
+        // --- Form Submission (Create or Update) ---
+        journalForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const title = journalTitleInput.value;
+            const content = journalEntryTextarea.value;
+            const entryId = editingEntryIdInput.value;
+
+            const data = { title, content };
+            let url = API_BASE_URL;
+            let method = 'POST';
+
+            if (entryId) {
+                url += `/${entryId}`;
+                method = 'PUT';
+                updateStatus(`Updating entry ID: ${entryId}...`, "SENDING_UPDATE...", false);
+            } else {
+                updateStatus("Saving new entry...", "SENDING_DATA...", false);
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    const resultEntry = await response.json(); // POST returns 201, PUT returns 200
+                    const action = entryId ? "updated" : "saved";
+                    alert(`Entry "${resultEntry.title}" ${action} successfully! ID: ${resultEntry.id}`);
+                    updateStatus(`Entry ${action}.`, "TRANSMISSION_OK", false);
+                    setFormForNewEntry();
+                    fetchAndDisplayEntries(); // Refresh list
+                } else {
+                    const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                    console.error('Error saving entry:', response.status, errorData);
+                    alert(`Error: ${errorData.detail || response.statusText}`);
+                    updateStatus(`Error ${entryId ? "updating" : "saving"}.`, "TRANSMISSION_ERROR", true);
+                }
+            } catch (error) {
+                console.error('Network error or backend down:', error);
+                alert('Failed to connect to the journal service. Is it running?');
+                updateStatus("Connection failed.", "CONNECTION_LOST", true);
+            }
+        });
+
+        // --- Initial Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAndDisplayEntries();
+            journalTitleInput.focus();
+        });
+
+    </script>
+</body>
+</html>

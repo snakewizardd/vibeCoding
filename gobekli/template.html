@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Göbekli Tepe // Singularity // Ancient Future</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace; /* 90s digital feel */
+            background-color: #0a0a0a; /* Almost black for high contrast */
+            color: #00ffff; /* Cyan neon base color */
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            display: grid; /* Use grid for main layout */
+            grid-template-columns: 250px 1fr; /* Sidebar fixed width, content takes rest */
+            grid-template-areas: "sidebar main";
+            min-height: 100vh;
+        }
+
+        /* Neon Text Effect */
+        .neon-text {
+            color: #00ffff;
+            text-shadow:
+                0 0 7px #00ffff,
+                0 0 10px #00ffff,
+                0 0 21px #00ffff,
+                0 0 42px #00aaff, /* Blue glow */
+                0 0 82px #00aaff,
+                0 0 92px #00aaff,
+                0 0 102px #00aaff,
+                0 0 151px #00aaff;
+        }
+
+        .neon-pink {
+             color: #ff00ff;
+             text-shadow:
+                0 0 7px #ff00ff,
+                0 0 10px #ff00ff,
+                0 0 21px #ff00ff,
+                0 0 42px #ff00ff,
+                0 0 82px #ff00ff,
+                0 0 92px #ff00ff,
+                0 0 102px #ff00ff,
+                0 0 151px #ff00ff;
+        }
+
+        .neon-green {
+            color: #00ff00;
+            text-shadow:
+                0 0 7px #00ff00,
+                0 0 10px #00ff00,
+                0 0 21px #00ff00,
+                0 0 42px #00aa00, /* Green glow */
+                0 0 82px #00aa00,
+                0 0 92px #00aa00,
+                0 0 102px #00aa00,
+                0 0 151px #00aa00;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: rgba(0, 255, 255, 0.03);
+            border-right: 2px solid #00ffff;
+            box-shadow: 0 0 10px #00ffff;
+            padding: 20px;
+            overflow-y: auto; /* Allow scrolling if content is tall */
+        }
+
+        .sidebar h2 {
+            font-size: 1.5em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar nav ul li a {
+            color: #00ffff;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            display: block; /* Make the whole area clickable */
+            padding: 5px 0;
+        }
+
+         .sidebar nav ul li a:hover {
+             color: #ff00ff;
+             text-shadow: 0 0 8px #ff00ff;
+         }
+
+        .sidebar nav ul li ul {
+            margin-top: 8px;
+            padding-left: 15px; /* Indent nested items */
+            border-left: 1px dashed rgba(0, 255, 255, 0.5); /* Visual nesting cue */
+        }
+
+        .sidebar nav ul li ul li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar nav ul li ul li a {
+            font-size: 0.9em;
+            color: #93c5fd; /* Lighter blue for nested links */
+            text-shadow: none;
+        }
+
+         .sidebar nav ul li ul li a:hover {
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+         }
+
+
+        /* Main Content Area */
+        .main-content {
+            grid-area: main;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px 0; /* Reduced padding */
+            background: linear-gradient(to bottom, rgba(0, 255, 255, 0.1), rgba(0, 170, 255, 0.05));
+            border-bottom: 2px solid #00ffff;
+            box-shadow: 0 0 20px #00ffff;
+            margin-bottom: 30px; /* Reduced margin */
+        }
+
+        header h1 {
+            font-size: 2.5em; /* Reduced font size */
+            margin: 0;
+            animation: flicker 1.5s infinite alternate; /* Simple flicker effect */
+        }
+
+         header p {
+             font-size: 1em; /* Reduced font size */
+             margin-top: 5px; /* Reduced margin */
+             color: #ff00ff; /* Pink accent */
+             text-shadow: 0 0 5px #ff00ff;
+         }
+
+        /* Sections in Main Content */
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-section h2 {
+            font-size: 2em;
+            color: #00ff00; /* Neon green for section titles */
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(0, 255, 0, 0.5);
+            padding-bottom: 5px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Container using Grid for Panels */
+        .panels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px; /* Slightly reduced gap */
+            width: 100%;
+        }
+
+        /* Card/Panel Styling */
+        .panel {
+            background-color: rgba(0, 255, 255, 0.05); /* Semi-transparent cyan background */
+            border: 2px solid #00ffff; /* Neon border */
+            border-radius: 10px;
+            padding: 20px; /* Reduced padding */
+            box-shadow: 0 0 15px #00ffff; /* Neon glow */
+            transition: all 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .panel:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+            border-color: #ff00ff;
+            box-shadow: 0 0 25px #ff00ff, 0 0 40px #ff00ff;
+            transform: translateY(-8px);
+        }
+
+        .panel h3 { /* Changed from h2 to h3 within panels */
+            font-size: 1.1em; /* Reduced font size */
+            color: #00ffff;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .panel p {
+            font-size: 0.95em; /* Slightly larger text than before */
+            color: #ffffff;
+            margin-bottom: 15px; /* Reduced margin */
+            flex-grow: 1;
+        }
+
+        .panel .button {
+            display: inline-block;
+            background-color: transparent;
+            color: #ff00ff;
+            border: 2px solid #ff00ff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            align-self: flex-start;
+            text-shadow: 0 0 5px #ff00ff;
+            box-shadow: 0 0 10px #ff00ff;
+            font-size: 0.8em;
+        }
+
+        .panel .button:hover {
+            background-color: #ff00ff;
+            color: #0a0a0a;
+            text-shadow: none;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        /* Widget Placeholder Styling */
+        .widget-placeholder {
+            background-color: rgba(0, 255, 0, 0.05); /* Green tint */
+            border: 1px dashed #00ff00;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            color: #00ff00;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+
+        /* Animation for Header Flicker */
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow:
+                    0 0 4px #00ffff,
+                    0 0 11px #00ffff,
+                    0 0 19px #00ffff,
+                    0 0 40px #00aaff,
+                    0 0 80px #00aaff,
+                    0 0 90px #00aaff,
+                    0 0 100px #00aaff,
+                    0 0 150px #00aaff;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+
+        /* Responsive adjustments for sidebar layout */
+        @media (max-width: 900px) { /* Adjust breakpoint for sidebar collapse */
+            body {
+                grid-template-columns: 1fr; /* Stack sidebar and main content */
+                grid-template-areas:
+                    "sidebar"
+                    "main";
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid #00ffff; /* Add bottom border when stacked */
+                box-shadow: 0 0 10px #00ffff; /* Maintain shadow */
+                padding-bottom: 20px;
+                overflow-y: visible; /* Allow normal flow */
+            }
+
+             .sidebar h2 {
+                 text-align: left; /* Align header left in stacked view */
+             }
+        }
+
+         @media (max-width: 500px) {
+             header h1 {
+                 font-size: 2em;
+             }
+              header p {
+                  font-size: 0.9em;
+              }
+             .content-section h2 {
+                 font-size: 1.5em;
+             }
+             .panel {
+                 padding: 15px;
+             }
+         }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2 class="neon-green">// SYSTEM INDEX //</h2>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#section-core-data">// CORE DATA //</a>
+                    <ul>
+                        <li><a href="#panel-location">Location Signal</a></li>
+                        <li><a href="#panel-age">Temporal Anomaly</a></li>
+                        <li><a href="#panel-predates">Pre-Classical Structure</a></li>
+                        <li><a href="#panel-first-temple">Primary Function</a></li>
+                        <li><a href="#panel-name">Nomenclature Origin</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#section-structures-glyphs">// STRUCTURES & GLYPHS //</a>
+                    <ul>
+                        <li><a href="#panel-circles">Structural Patterns</a></li>
+                        <li><a href="#panel-t-pillars">Identified Constructs: T-Pillars</a></li>
+                        <li><a href="#panel-carvings">Glyph Database: Fauna</a></li>
+                        <li><a href="#panel-megaliths">Material Analysis: Megaliths</a></li>
+                        <li><a href="#panel-human-imagery">Human Representation Rarity</a></li>
+                        <li><a href="#panel-pillar-43">Unit P43 Analysis (Vulture Stone)</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#section-analysis-theories">// ANALYSIS & THEORIES //</a>
+                     <ul>
+                        <li><a href="#panel-builders">Labor Force Origin</a></li>
+                        <li><a href="#panel-society">Societal Implication</a></li>
+                        <li><a href="#panel-ritual">Hypothesized Ritual Use</a></li>
+                        <li><a href="#panel-gathering">Intergroup Assembly Point</a></li>
+                        <li><a href="#panel-burial">Termination Protocol</a></li>
+                        <li><a href="#panel-astronomy">Potential Astronomical Data</a></li>
+                    </ul>
+                </li>
+                 <li>
+                    <a href="#section-status-context">// STATUS & CONTEXT //</a>
+                     <ul>
+                        <li><a href="#panel-regional">Regional Network</a></li>
+                        <li><a href="#panel-unesco">Designation: World Heritage</a></li>
+                         <li><a href="#panel-discovery">Initiation of Contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <!-- Widget Placeholder 1 -->
+        <div class="widget-placeholder">
+            [ WIDGET SLOT A ] <br> Future Interactive Map / Filter Interface
+        </div>
+         <!-- Widget Placeholder 2 -->
+        <div class="widget-placeholder">
+            [ WIDGET SLOT B ] <br> Connection Status / Live Data Feed
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h1 class="neon-text">GÖBEKLI TEPE</h1>
+            <p class="neon-pink">// ANCIENT DATASTREAM // PROCESSING MILLENNIA //</p>
+        </header>
+
+        <div class="panels-container">
+            <!-- Section: Core Data -->
+            <section class="content-section" id="section-core-data">
+                <h2 class="neon-green">// CORE DATA //</h2>
+                 <div class="panels-grid"> <!-- Inner grid for panels in section -->
+                    <div class="panel" id="panel-location">
+                        <h3>Location Signal</h3>
+                        <p>Transmitted coordinates point to southeastern Turkey, within the historical region of Upper Mesopotamia, near the Şanlıurfa nexus.</p>
+                        <a href="https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-age">
+                        <h3>Temporal Anomaly</h3>
+                        <p>Temporal data places creation during the Pre-Pottery Neolithic A period, approx. 9600–8200 BCE. Temporal displacement exceeds 11,000 years.</p>
+                        <a href="https://en.wikipedia.org/wiki/G%C3%B6bekli_Tepe" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-predates">
+                        <h3>Pre-Classical Structure</h3>
+                        <p>Detected construction predates known major structures: Stonehenge by ~6000 years, Egyptian pyramids by ~7000 years. Significant temporal shift.</p>
+                        <a href="https://www.smithsonianmag.com/history/gobekli-tepe-the-worlds-first-temple-83613665/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-first-temple">
+                        <h3>Primary Function</h3>
+                        <p>Hypothesis: Primary function was large-scale worship or ceremonial hub. Represents earliest known complex gathering point for symbolic activities.</p>
+                        <a href="https://toursce.com/blog/14-things-you-should-know-about-gobeklitepe/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                     <div class="panel" id="panel-name">
+                        <h3>Nomenclature Origin</h3>
+                        <p>Designation "Göbekli Tepe" derived from Turkish, meaning "Potbelly Hill." Refers to the artificial mound formed by layers of construction and backfill.</p>
+                        <a href="https://www.smithsonianmag.com/history/gobekli-tepe-the-worlds-first-temple-83613665/" class="button" target="_blank">Access Data</a>
+                    </div>
+                 </div>
+            </section>
+
+            <!-- Section: Structures & Glyphs -->
+            <section class="content-section" id="section-structures-glyphs">
+                <h2 class="neon-green">// STRUCTURES & GLYPHS //</h2>
+                <div class="panels-grid"> <!-- Inner grid for panels in section -->
+                    <div class="panel" id="panel-circles">
+                        <h3>Structural Patterns</h3>
+                        <p>Architectural analysis reveals multiple distinct circular and oval enclosures. Structures defined by large standing megalithic stones and pillars.</p>
+                        <a href="https://whc.unesco.org/en/list/1572/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-t-pillars">
+                        <h3>Identified Constructs: T-Pillars</h3>
+                        <p>Signature elements are large T-shaped limestone pillars. Theory: Represents stylized anthropomorphic (human-like) figures.</p>
+                        <a href="https://whc.unesco.org/en/list/1572/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-carvings">
+                        <h3>Glyph Database: Fauna</h3>
+                        <p>Extensive database of animal carvings discovered on pillars: foxes, snakes, birds (vultures), wild boars, gazelles, wild cattle, and various insects/reptiles.</p>
+                        <a href="https://whc.unesco.org/en/list/1572/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-megaliths">
+                        <h3>Material Analysis: Megaliths</h3>
+                        <p>Structural components are carved from local limestone. Some pillars weigh up to 20 tons, indicating advanced logistical and organizational capabilities.</p>
+                        <a href="https://whc.unesco.org/en/list/1572/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-human-imagery">
+                        <h3>Human Representation Rarity</h3>
+                        <p>Figurative human depictions are uncommon. A notable exception is a carving on Pillar 43 depicting a headless male figure.</p>
+                         <a href="https://www.dainst.blog/the-tepe-telegrams/2016/10/14/of-animals-and-a-headless-man-gobekli-tepe-pillar-43/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-pillar-43">
+                        <h3>Unit P43 Analysis (Vulture Stone)</h3>
+                        <p>Pillar 43 displays complex iconography, including various animals and abstract symbols. Interpreted by some as a narrative sequence or record of a cosmic event.</p>
+                         <a href="https://www.dainst.blog/the-tepe-telegrams/2016/10/14/of-animals-and-a-headless-man-gobekli-tepe-pillar-43/" class="button" target="_blank">Access Data</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Analysis & Theories -->
+             <section class="content-section" id="section-analysis-theories">
+                <h2 class="neon-green">// ANALYSIS & THEORIES //</h2>
+                <div class="panels-grid"> <!-- Inner grid for panels in section -->
+                    <div class="panel" id="panel-builders">
+                        <h3>Labor Force Origin</h3>
+                        <p>Research indicates construction by hunter-gatherer populations. Challenges prior models that required settled agriculture for monumental works.</p>
+                        <a href="https://archaeology.org/issues/may-june-2021/features/turkey-gobekli-tepe-hunter-gatherers/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-society">
+                        <h3>Societal Implication</h3>
+                        <p>Complex construction implies sophisticated social structure, cooperation, and shared symbolic beliefs among dispersed groups earlier than previously hypothesized.</p>
+                        <a href="https://www.smithsonianmag.com/history/gobekli-tepe-the-worlds-first-temple-83613665/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-ritual">
+                        <h3>Hypothesized Ritual Use</h3>
+                        <p>Site likely served as a sanctuary for diverse hunter-gatherer communities, facilitating shared rituals, communal feasts, and possibly rites of passage.</p>
+                        <a href="https://www.britannica.com/place/Gobekli-Tepe" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-gathering">
+                        <h3>Intergroup Assembly Point</h3>
+                        <p>Theory: Göbekli Tepe functioned as a critical node for inter-group interaction, knowledge exchange, resource sharing, and alliance formation.</p>
+                        <a href="https://www.skeptic.com/reading_room/gobekli-tepe-mystery-new-chapter-in-history-robert-adam-schneiker/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-burial">
+                        <h3>Termination Protocol</h3>
+                        <p>Systematic and deliberate burial of the complex around 8000 BCE detected. Motivation for this massive act remains under investigation.</p>
+                         <a href="https://www.quora.com/What-are-the-best-theories-about-Gobekli-Tepi-I-heard-that-it-was-deliberately-buried-and-they-can-t-find-other-evidence-of-humans-around-it-such-as-tools-broken-pottery-or-trash-What-is-the-best-explanation" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                     <div class="panel" id="panel-astronomy">
+                        <h3>Potential Astronomical Data</h3>
+                        <p>Hypothesis: Pillar arrangements and specific animal carvings may encode astronomical observations or represent celestial maps/events, possibly a comet impact.</p>
+                        <a href="https://www.sci.news/archaeology/gobekli-tepes-carvings-solar-calendar-13156.html" class="button" target="_blank">Access Data</a>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Section: Status & Context -->
+             <section class="content-section" id="section-status-context">
+                <h2 class="neon-green">// STATUS & CONTEXT //</h2>
+                <div class="panels-grid"> <!-- Inner grid for panels in section -->
+                    <div class="panel" id="panel-regional">
+                        <h3>Regional Network</h3>
+                        <p>Göbekli Tepe is linked to other nearby Neolithic sites in the Taş Tepeler region, suggesting a wider network of interconnected communities and monumental centers.</p>
+                        <a href="https://www.tandfonline.com/doi/full/10.1080/1751696X.2024.2373876" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                    <div class="panel" id="panel-unesco">
+                        <h3>Designation: World Heritage</h3>
+                        <p>Acknowledged for its profound historical significance, Göbekli Tepe was designated a UNESCO World Heritage Site in 2018.</p>
+                        <a href="https://whc.unesco.org/en/list/1572/" class="button" target="_blank">Access Data</a>
+                    </div>
+
+                     <div class="panel" id="panel-discovery">
+                        <h3>Initiation of Contact</h3>
+                        <p>Initial notation in the 1960s. Extensive excavation and realization of significance commenced in 1995 under lead archaeologist Klaus Schmidt.</p>
+                        <a href="https://www.bbc.com/travel/article/20210815-an-immense-mystery-older-than-stonehenge" class="button" target="_blank">Access Data</a>
+                    </div>
+                </div>
+            </section>
+
+
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi>=0.100.0 # Or latest
+uvicorn[standard]>=0.23.0 # Or latest
+psycopg2-binary>=2.9.0 # For PostgreSQL connection
+pydantic>=1.10.0,<2.0.0 # If using Pydantic v1 style, or pydantic>=2.0.0 for v2
+# For Pydantic v2 use:
+# from pydantic_settings import BaseSettings for env var loading if needed
+# from pydantic import BaseModel, Field etc.
+# And `model_config = ConfigDict(from_attributes=True)` instead of `orm_mode = True`

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>His Holiness Pope Leo XIV - Official Information</title>
+    <style>
+        /* Basic Reset & Defaults */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            margin-bottom: 0.75em;
+            color: #2c3e50; /* Dark Slate Blue */
+        }
+
+        h1 { font-size: 2.8em; }
+        h2 { font-size: 2.2em; }
+        h3 { font-size: 1.8em; }
+        h4 { font-size: 1.4em; }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        a {
+            color: #8a6d3b; /* Muted Gold/Brown */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Container */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+
+        /* Header & Navigation */
+        .site-header {
+            background: #fff; /* White background */
+            color: #2c3e50;
+            padding: 20px 0;
+            border-bottom: 3px solid #ffd700; /* Papal Gold */
+            text-align: center;
+        }
+
+        .site-header h1 {
+            margin-bottom: 0.2em;
+            font-size: 2.5em;
+            color: #1a2533;
+        }
+        .site-header .subtitle {
+            font-size: 1.2em;
+            color: #555;
+            font-style: italic;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 15px 0;
+            text-align: center;
+            background: #333; /* Dark background for nav */
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            background-color: #ffd700; /* Papal Gold */
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+            padding: 20px 0;
+        }
+
+        .content-section {
+            background: #fff;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .content-section h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: #2c3e50 url('https://via.placeholder.com/1200x400?text=St.+Peter%27s+Basilica+View') center center/cover no-repeat; /* Placeholder background */
+            color: #fff;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 5px solid #ffd700;
+            position: relative;
+        }
+        .hero::before { /* Overlay for better text readability */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .hero-content {
+            position: relative; /* To sit above the overlay */
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 0.3em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pope-image-placeholder {
+            width: 200px;
+            height: 250px;
+            background: #ccc url('./leo.png') center center/cover no-repeat; /* Placeholder image */
+            border: 5px solid #fff;
+            border-radius: 50%; /* Make it circular */
+            margin: 20px auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        /* Specific Sections */
+        .biography-highlights ul, .views-list ul {
+            list-style: none; /* Or 'disc' inside .content-section if preferred */
+            padding-left: 0;
+        }
+        .biography-highlights li, .views-list li {
+            padding-left: 1.5em;
+            position: relative;
+            margin-bottom: 0.8em;
+        }
+        .biography-highlights li::before, .views-list li::before {
+            content: "✠"; /* Augustinian Cross or similar */
+            position: absolute;
+            left: 0;
+            color: #8a6d3b;
+            font-weight: bold;
+        }
+
+        .quote {
+            font-style: italic;
+            border-left: 3px solid #ffd700;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #555;
+        }
+        
+        .controversy-note {
+            background-color: #f9f2f4; /* Light pinkish for sensitive topics */
+            border-left: 4px solid #c9302c; /* Reddish border */
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .controversy-note p {
+            margin-bottom: 0.5em;
+        }
+        .controversy-note strong {
+            color: #a94442; /* Darker red for emphasis */
+        }
+
+
+        /* Footer */
+        .site-footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 25px 0;
+            font-size: 0.9em;
+        }
+
+        .site-footer p {
+            margin-bottom: 0.5em;
+        }
+        .site-footer a {
+            color: #ffd700;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .site-header h1 { font-size: 2em; }
+            .hero h1 { font-size: 2.5em; }
+            .hero p { font-size: 1.1em; }
+            nav ul li { display: block; margin: 10px 0; }
+            h1 { font-size: 2.2em; }
+            h2 { font-size: 1.8em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="container">
+            <h1>His Holiness Pope Leo XIV</h1>
+            <p class="subtitle">Robert Francis Prevost, O.S.A. – Supreme Pontiff of the Universal Church</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#biography">Biography</a></li>
+            <li><a href="#vision">Vision & Priorities</a></li>
+            <li><a href="#pontificate">The Pontificate</a></li>
+            <li><a href="#coat-of-arms">Coat of Arms</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Habemus Papam!</h1>
+                <p>The College of Cardinals has elected His Eminence Cardinal Robert Francis Prevost as the 267th Pope of the Catholic Church. He has taken the name Leo XIV. Elected on May 8, 2025, he is the first Pope from the United States of America.</p>
+                <div class="pope-image-placeholder"></div>
+                <p>This site offers comprehensive information on our new Holy Father.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <section id="biography" class="content-section">
+                <h2>Biography of Pope Leo XIV</h2>
+                <p><strong>Birth Name:</strong> Robert Francis Prevost<br>
+                   <strong>Born:</strong> September 14, 1955, in Chicago, Illinois, U.S.A.<br>
+                   <strong>Dual Citizenship:</strong> United States and Peru (naturalized 2015)</p>
+
+                <h3>Early Life & Formation</h3>
+                <p>Born in Chicago, Robert Prevost's journey in faith led him to the Order of Saint Augustine (OSA). He entered the Augustinian novitiate in 1977, made his solemn vows in 1981, and was ordained a priest in Rome on June 19, 1982.</p>
+
+                <h3>Academic Achievements</h3>
+                <ul class="biography-highlights">
+                    <li>Bachelor of Science in Mathematics, Villanova University (1977)</li>
+                    <li>Master of Divinity, Catholic Theological Union, Chicago (1982)</li>
+                    <li>Licentiate in Canon Law, Pontifical College of St. Thomas Aquinas, Rome (1984)</li>
+                    <li>Doctorate in Canon Law, Pontifical College of St. Thomas Aquinas, Rome (1987) – Thesis on "The Role of the Local Prior in the Augustinian Order."</li>
+                </ul>
+
+                <h3>Service in Peru & Augustinian Leadership</h3>
+                <p>A significant portion of Pope Leo XIV's ministry was dedicated to missionary work in Peru, beginning in 1985. His roles included:</p>
+                <ul class="biography-highlights">
+                    <li>Chancellor of the Territorial Prélature of Chulucanas (1985-1986).</li>
+                    <li>Head of the Augustinian seminary in Trujillo for ten years, teaching canon law, serving as prefect of studies, judge of the regional ecclesiastical court, member of the college of consultors, and leading a congregation.</li>
+                    <li>Provincial Prior of the Midwest Augustinians, Chicago (1999-2001).</li>
+                    <li>Prior General of the worldwide Augustinian order for two six-year terms (2001-2013).</li>
+                </ul>
+
+                <h3>Episcopal Ministry</h3>
+                <p>Pope Francis recognized his pastoral zeal and administrative capabilities, appointing him:</p>
+                <ul class="biography-highlights">
+                    <li>Apostolic Administrator of the Diocese of Chiclayo, Peru (2014).</li>
+                    <li>Bishop of Chiclayo (2015-2023). During this time, he also served as vice-president of the Peruvian Bishops’ Conference and apostolic administrator of Callao.</li>
+                </ul>
+                <p>Peruvian bishops, including then-Bishop Prevost, played an important role in ensuring institutional stability during times of political crisis in the country.</p>
+
+                <h3>Vatican Service & Path to the Papacy</h3>
+                <p>His experience and wisdom led to significant appointments within the Roman Curia:</p>
+                <ul class="biography-highlights">
+                    <li>Prefect of the Dicastery for Bishops (appointed January 2023 by Pope Francis). This role also includes presidency of the Pontifical Commission for Latin America.</li>
+                    <li>Elevated to Cardinal by Pope Francis on September 30, 2023.</li>
+                    <li>Promoted to Cardinal-Bishop on February 6, 2025.</li>
+                    <li>Member of seven Vatican dicasteries and the Commission for the Governance of Vatican City State.</li>
+                </ul>
+                <p>On <strong>May 8, 2025</strong>, Cardinal Prevost was elected Supreme Pontiff, taking the name <strong>Leo XIV</strong>.</p>
+            </section>
+
+            <section id="vision" class="content-section">
+                <h2>Vision & Priorities of Pope Leo XIV</h2>
+                <p>As Cardinal Prefect and throughout his ministry, Pope Leo XIV has articulated a clear vision for the Church, emphasizing pastoral care, unity, and synodality.</p>
+
+                <h3>The Bishop as Pastor</h3>
+                <p class="quote">"A bishop is primarily a pastor, not a manager. His first duty is to communicate the beauty and joy of knowing Jesus, rather than just teaching doctrine."</p>
+                <p>He envisions an ideal bishop as one with:</p>
+                <ul class="views-list">
+                    <li>A broad, universal ("Catholic") vision.</li>
+                    <li>The ability to listen, seek advice, and possess psychological and spiritual maturity.</li>
+                    <li>A capacity for closeness to the community, especially priests.</li>
+                    <li>A life of closeness to all, excluding no one, reflecting Pope Francis's four types of closeness (to God, brother bishops, priests, and all God's people).</li>
+                    <li>Authority exercised as service and accompaniment, not isolation.</li>
+                </ul>
+
+                <h3>Unity, Communion, and Synodality</h3>
+                <p>Pope Leo XIV strongly advocates for promoting unity within the Church and with the Pope, viewing divisions as harmful. He sees synodality as a path to renewal, requiring a "new attitude" of listening to the Holy Spirit and one another. While valuing consultation in appointing bishops, he notes this is not a "political" process.</p>
+
+                <h3>Inclusion and Outreach</h3>
+                <p>Echoing Pope Francis, he has long embraced marginalized groups and stresses listening to all "people of God," including religious and laity. He supports the inclusion of women in discernment, such as their appointment to the Dicastery for Bishops, providing valuable perspectives.</p>
+
+                <h3>Key Social & Church Teachings</h3>
+                <ul class="views-list">
+                    <li><strong>Social Issues:</strong> Generally seen as centrist, progressive on some issues. Strong alignment with Pope Francis on the environment, outreach to the poor and migrants, and "meeting people where they are."</li>
+                    <li><strong>Divorced and Remarried:</strong> Supported Pope Francis's change allowing reception of Holy Communion under certain conditions.</li>
+                    <li><strong>LGBTQ+ Issues:</strong> While voicing concern in 2012 about lifestyles contradicting the Gospel, he showed mild support for <em>Fiducia Supplicans</em>, emphasizing the role of national bishops' conferences in interpretation. His stance on blessing same-sex couples is noted as "Ambiguous."</li>
+                    <li><strong>Ordination of Women Deacons:</strong> Opposes, viewing it as "clericalizing women" which he believes would not solve problems.</li>
+                    <li><strong>Economic Issues:</strong> Stresses good administration and trust in Divine Providence, acknowledging the challenges of maintaining Church institutions with reduced income.</li>
+                    <li><strong>Social Media:</strong> Sees it as an important tool for the Gospel but urges preparation, prudence, and care to avoid fueling division.</li>
+                </ul>
+                
+                <h3>Addressing Challenges: Clergy Abuse</h3>
+                <div class="controversy-note">
+                    <p><strong>Commitment to Healing and Justice:</strong> Pope Leo XIV inherits the Church's ongoing efforts to address the scourge of clergy sexual abuse. His tenure as Prefect of the Dicastery for Bishops involved overseeing the application of norms like <em>Vos estis lux mundi</em>.</p>
+                    <p>Questions were raised regarding his handling of specific cases during his time as Augustinian provincial prior in Chicago and as Bishop of Chiclayo. Supporters maintain he followed Church law and procedures, while victim advocacy groups have expressed concerns.</p>
+                    <p>The Holy See remains committed to transparency, accountability, and the protection of minors and vulnerable adults. Pope Leo XIV is expected to continue prioritizing these efforts, fostering healing and ensuring robust safeguarding measures throughout the Church.</p>
+                </div>
+            </section>
+
+            <section id="pontificate" class="content-section">
+                <h2>The Pontificate of Leo XIV: Significance</h2>
+                <p>The election of Pope Leo XIV marks a historic moment for the Catholic Church.</p>
+                <ul class="views-list">
+                    <li><strong>First American Pope:</strong> This is a landmark event, bringing a Pope from a nation relatively young in the grand timeline of the Church but with a vibrant and diverse Catholic population.</li>
+                    <li><strong>Dual Nationality & Missionary Heart:</strong> His U.S. birth and Peruvian citizenship, coupled with extensive missionary service in Latin America, offer a unique global perspective. This can bridge understanding between the Global North and South.</li>
+                    <li><strong>Experienced Administrator & Pastor:</strong> His leadership as Prior General of the Augustinians, Bishop in Peru, and Prefect of the Dicastery for Bishops provides a deep understanding of both local diocesan realities and the universal Church's governance.</li>
+                    <li><strong>Continuity and Renewal:</strong> Seen by many as aligned with key aspects of Pope Francis's vision—such as synodality, pastoral mercy, and outreach to the marginalized—his pontificate may continue and consolidate these directions while bringing his own distinct pastoral style.</li>
+                    <li><strong>Emphasis on Listening:</strong> His consistent call for listening—to the Holy Spirit, to brother bishops, to priests, and to all the faithful—suggests a pontificate characterized by discernment and collaborative engagement.</li>
+                </ul>
+            </section>
+
+            <section id="coat-of-arms" class="content-section">
+                <h2>The Papal Coat of Arms</h2>
+                <div style="text-align: center; padding: 20px; border: 1px dashed #ccc; background-color: #fafafa;">
+                    <!-- <img src="https://via.placeholder.com/150x200?text=Papal+Insignia" alt="Placeholder for Coat of Arms" style="max-width: 150px; margin-bottom:15px;"> -->
+                    <p><em>The official Coat of Arms of His Holiness Pope Leo XIV will be unveiled shortly.</em></p>
+                    <p>Traditionally, a Pope's coat of arms includes symbols representing his life, ministry, and spiritual heritage, often incorporating elements from his previous episcopal arms, surmounted by the papal tiara (or mitre) and the keys of Saint Peter.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; <script>document.write(new Date().getFullYear())</script> The Holy See. All rights reserved.</p>
+            <p>This website provides information on His Holiness Pope Leo XIV. For official Vatican news, please visit <a href="https://www.vatican.va" target="_blank" rel="noopener noreferrer">www.vatican.va</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Update active class
+                document.querySelectorAll('nav a').forEach(navLink => navLink.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
