@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \ 
     && rm -rf /var/lib/apt/lists/*
 
-# ... rest of your Dockerfile ...
-
 # --- Configure Python/FastAPI Backend ---
 WORKDIR /app
 
@@ -36,7 +34,7 @@ COPY ./backend/app /app/app
 # NOTE: Data will NOT be persistent unless a volume is mounted to /var/lib/postgresql/data externally
 RUN chown -R postgres:postgres /var/lib/postgresql \
     && chmod -R 700 /var/lib/postgresql \
-    && su postgres -c "pg_ctl initdb -D /var/lib/postgresql/data"
+    && su postgres -c "/usr/lib/postgresql/14/bin/pg_ctl initdb -D /var/lib/postgresql/data" # Use full path here
 
 # Configure PostgreSQL authentication (simple trust for this example, NOT secure)
 # In a real scenario, you'd use environment variables and more secure methods
@@ -88,45 +86,12 @@ RUN mkdir -p /var/log/supervisor
 # COPY the supervisord.conf file from your local directory into the image
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# --- Entrypoint Script ---
-# An entrypoint script would typically wait for Postgres before starting the app
-# For this example, we'll rely on supervisor + potential retries in the app
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose the port Nginx is listening on
 EXPOSE 80
 
-# CMD runs supervisor, which starts the other services
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-# Remember to have the supervisord.conf file separate with the following content:
-# [supervisord]
-# nodaemon=true
-
-# [program:postgres]
-# command=su postgres -c "/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/data" # Use appropriate version (e.g., 14)
-# user=root
-# autostart=true
-# autorestart=true
-# stdout_logfile=/var/log/supervisor/postgres.log
-# stderr_logfile=/var/log/supervisor/postgres.err
-# startsecs=5
-# startretries=3
-
-# [program:backend]
-# command=gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 127.0.0.1:8000
-# directory=/app
-# autostart=true
-# autorestart=true
-# stdout_logfile=/var/log/supervisor/backend.log
-# stderr_logfile=/var/log/supervisor/backend.err
-# environment=POSTGRES_USER=user,POSTGRES_PASSWORD=password,POSTGRES_DB=retro_journal_db,DB_HOST=127.0.0.1,DB_PORT=5432
-# startsecs=15
-# startretries=5
-
-# [program:nginx]
-# command=nginx -g "daemon off;"
-# autostart=true
-# autorestart=true
-# stdout_logfile=/var/log/supervisor/nginx.log
-# stderr_logfile=/var/log/supervisor/nginx.err
-# startsecs=20
+# CMD no longer runs supervisor directly; instead, it executes the entrypoint.sh script
+CMD ["/usr/local/bin/entrypoint.sh"]
