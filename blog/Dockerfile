@@ -2,7 +2,8 @@
 FROM ubuntu:22.04
 
 # Install system dependencies: Python, pip, PostgreSQL, Nginx, Supervisor
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Set DEBIAN_FRONTEND to noninteractive to avoid prompts
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip \
     postgresql postgresql-contrib \
     nginx \
@@ -32,8 +33,9 @@ RUN chown -R postgres:postgres /var/lib/postgresql \
 
 # Configure PostgreSQL authentication (simple trust for this example, NOT secure)
 # In a real scenario, you'd use environment variables and more secure methods
-RUN echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/14/main/pg_hba.conf # Use appropriate version
-RUN echo "listen_addresses='*'" >> /etc/postgresql/14/main/postgresql.conf # Use appropriate version
+# Make sure the Postgres version matches the installed one (e.g., 14)
+RUN echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/14/main/pg_hba.conf
+RUN echo "listen_addresses='*'" >> /etc/postgresql/14/main/postgresql.conf
 
 # Set up DB environment variables for the app (passed via Supervisor config)
 ENV POSTGRES_USER user
@@ -76,6 +78,7 @@ RUN ln -s /etc/nginx/sites-available/retrojournal /etc/nginx/sites-enabled/
 # --- Configure Supervisor to manage processes ---
 RUN mkdir -p /var/log/supervisor
 
+# COPY the supervisord.conf file from your local directory into the image
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # --- Entrypoint Script ---
@@ -88,27 +91,30 @@ EXPOSE 80
 # CMD runs supervisor, which starts the other services
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
-# supervisord.conf (put this file next to your Dockerfile)
+# Remember to have the supervisord.conf file separate with the following content:
 # [supervisord]
 # nodaemon=true
 
 # [program:postgres]
-# command=su postgres -c "/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/data" # Use appropriate version
+# command=su postgres -c "/usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/data" # Use appropriate version (e.g., 14)
+# user=root
 # autostart=true
 # autorestart=true
 # stdout_logfile=/var/log/supervisor/postgres.log
 # stderr_logfile=/var/log/supervisor/postgres.err
+# startsecs=5
+# startretries=3
 
 # [program:backend]
-# command=gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 127.0.0.1:8000 # Production backend server
+# command=gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 127.0.0.1:8000
+# directory=/app
 # autostart=true
 # autorestart=true
 # stdout_logfile=/var/log/supervisor/backend.log
 # stderr_logfile=/var/log/supervisor/backend.err
 # environment=POSTGRES_USER=user,POSTGRES_PASSWORD=password,POSTGRES_DB=retro_journal_db,DB_HOST=127.0.0.1,DB_PORT=5432
-# # Add a slight delay to give postgres a chance to start
-# startsecs=10
-# startretries=5 # Retry starting backend if DB is slow
+# startsecs=15
+# startretries=5
 
 # [program:nginx]
 # command=nginx -g "daemon off;"
@@ -116,5 +122,4 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.con
 # autorestart=true
 # stdout_logfile=/var/log/supervisor/nginx.log
 # stderr_logfile=/var/log/supervisor/nginx.err
-# # Start nginx after backend (so it can proxy)
-# startsecs=15
+# startsecs=20
