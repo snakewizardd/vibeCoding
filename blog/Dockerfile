@@ -1,14 +1,21 @@
 # Use a base image that has system tools and is suitable for multiple applications
 FROM ubuntu:22.04
 
+# Set environment variables to make apt-get non-interactive and set a default timezone
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC  
+
 # Install system dependencies: Python, pip, PostgreSQL, Nginx, Supervisor
-# Set DEBIAN_FRONTEND to noninteractive to avoid prompts
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
+# The DEBIAN_FRONTEND env var set above should prevent the tzdata prompt now
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip \
     postgresql postgresql-contrib \
     nginx \
     supervisor \
+    tzdata \ 
     && rm -rf /var/lib/apt/lists/*
+
+# ... rest of your Dockerfile ...
 
 # --- Configure Python/FastAPI Backend ---
 WORKDIR /app
