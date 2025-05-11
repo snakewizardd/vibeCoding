@@ -36,7 +36,7 @@
             line-height: 1.6;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: flex-start; /* Changed from center to allow terminal to sit at top with padding */
             min-height: 100vh;
             padding: 20px;
             overflow-x: hidden;
@@ -64,7 +64,8 @@
         /* --- TERMINAL WINDOW STYLING --- */
         .terminal-window {
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px; /* Increased width for two-column layout */
+            height: calc(100vh - 40px); /* Use available viewport height minus body padding */
             border: 2px solid var(--border-color);
             background-color: rgba(10, 10, 10, 0.85);
             box-shadow: 0 0 25px var(--window-glow-color),
@@ -89,6 +90,7 @@
             align-items: center;
             text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
             user-select: none;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .title-bar .title {
@@ -100,21 +102,106 @@
             cursor: default;
         }
 
-        .content-area {
-            padding: 20px;
-            flex-grow: 1;
+        /* --- MAIN LAYOUT CONTAINER (holds sidebar and main panel) --- */
+        .main-layout-container {
+            flex-grow: 1; /* Takes available vertical space */
             display: flex;
-            flex-direction: column;
-            max-height: calc(100vh - 100px); /* Adjust based on title bar and status bar height */
-            overflow-y: auto; /* Enable scroll for content area if it overflows */
+            overflow: hidden; /* Prevent this container from scrolling; children will scroll */
+            padding: 0; /* Padding will be handled by sidebar/main-panel */
         }
 
-        /* --- FORM STYLING --- */
+        /* --- SIDEBAR (PREVIOUS ENTRIES) --- */
+        .sidebar {
+            width: 350px; /* Fixed width for readability */
+            min-width: 300px; /* Minimum width */
+            flex-shrink: 0; /* Prevent shrinking */
+            border-right: 2px solid var(--border-color);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Scrollbar for sidebar content */
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--primary-text-color);
+            flex-shrink: 0;
+        }
+        .sidebar h2::before {
+            content: 'ARCHIVE:> ';
+            opacity: 0.7;
+        }
+
+        #journalEntriesList {
+            list-style: none;
+            padding: 0;
+            /* max-height: 300px; Removed, sidebar handles scroll */
+            /* overflow-y: auto; Removed, sidebar handles scroll */
+            /* border: 1px solid var(--secondary-text-color); Removed, sidebar has border */
+            /* padding: 10px; Removed, sidebar has padding */
+            /* background-color: rgba(0,0,0,0.2); Removed */
+            flex-grow: 1; /* Allows list to take available space in sidebar */
+        }
+
+        .entry-item {
+            background-color: rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--secondary-text-color);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+            gap: 10px; /* Add gap between info and actions */
+        }
+        .entry-item:last-child {
+            border-bottom: none;
+        }
+        .entry-item:hover {
+            background-color: rgba(0, 255, 65, 0.05);
+        }
+        .entry-item-info {
+            flex-grow: 1;
+            min-width: 0; /* Allows text to wrap correctly in flex item */
+        }
+        .entry-item-title {
+            font-weight: bold;
+            display: block;
+            word-break: break-word; /* Ensure long titles wrap */
+        }
+        .entry-item-date {
+            font-size: 0.8rem;
+            color: var(--secondary-text-color);
+            display: block;
+        }
+        .entry-item-actions {
+            display: flex; /* Keep buttons side-by-side or stack if needed */
+            flex-direction: row; /* Default, but explicit */
+            gap: 8px;
+            flex-shrink: 0; /* Prevent buttons from shrinking too much */
+        }
+        .entry-item-actions button {
+            /* margin-left: 10px; Replaced by gap */
+            padding: 5px 10px; /* Smaller buttons for actions */
+            font-size: 0.85rem;
+        }
+
+        /* --- MAIN CONTENT PANEL (JOURNAL FORM) --- */
+        .main-panel {
+            flex-grow: 1; /* Takes remaining width */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Scrollbar for form content if it overflows */
+        }
+
         #journalForm {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            /* flex-grow: 1; Removed to allow space for entry list */
+            flex-grow: 1; /* Allow form to grow, important for textarea */
         }
 
         .input-group {
@@ -160,8 +247,8 @@
         }
 
         textarea {
-            min-height: 150px; /* Reduced height to make space for list */
-            /* flex-grow: 1; No longer needed if form isn't flex-grow 1 */
+            min-height: 250px; /* Increased min-height */
+            flex-grow: 1; /* Allow textarea to expand and fill space */
             line-height: 1.8;
         }
 
@@ -169,8 +256,9 @@
         .button-group {
             display: flex;
             gap: 15px;
-            /* margin-top: auto; Removed for fixed position */
-            padding-top: 10px;
+            padding-top: 10px; /* Spacing above buttons */
+            margin-top: 0; /* No longer margin-top:auto here, form structure handles it */
+            flex-shrink: 0; /* Prevent button group from shrinking */
         }
 
         .btn {
@@ -199,7 +287,7 @@
         }
 
         .btn-primary { /* Save/Update button */ }
-        .btn-secondary { /* Reset button */
+        .btn-secondary { /* Reset button / Load button */
             border-color: var(--secondary-text-color);
             color: var(--secondary-text-color);
             text-shadow: 0 0 3px var(--secondary-text-color);
@@ -220,67 +308,6 @@
             box-shadow: 0 0 10px var(--accent-color);
         }
 
-
-        /* --- PREVIOUS ENTRIES LIST STYLING --- */
-        #previousEntriesSection {
-            margin-top: 30px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 20px;
-        }
-        #previousEntriesSection h2 {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            text-shadow: 0 0 5px var(--primary-text-color);
-        }
-        #previousEntriesSection h2::before {
-            content: 'ARCHIVE:> ';
-            opacity: 0.7;
-        }
-        #journalEntriesList {
-            list-style: none;
-            padding: 0;
-            max-height: 300px; /* Limit height and make scrollable */
-            overflow-y: auto;
-            border: 1px solid var(--secondary-text-color);
-            padding: 10px;
-            background-color: rgba(0,0,0,0.2);
-        }
-        .entry-item {
-            background-color: rgba(0,0,0,0.1);
-            border-bottom: 1px solid var(--secondary-text-color);
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.2s;
-        }
-        .entry-item:last-child {
-            border-bottom: none;
-        }
-        .entry-item:hover {
-            background-color: rgba(0, 255, 65, 0.05);
-        }
-        .entry-item-info {
-            flex-grow: 1;
-        }
-        .entry-item-title {
-            font-weight: bold;
-            display: block;
-        }
-        .entry-item-date {
-            font-size: 0.8rem;
-            color: var(--secondary-text-color);
-            display: block;
-        }
-        .entry-item-actions button {
-            margin-left: 10px;
-            padding: 5px 10px; /* Smaller buttons for actions */
-            font-size: 0.85rem;
-        }
-
-
         /* --- STATUS BAR --- */
         .status-bar {
             padding: 8px 10px;
@@ -288,11 +315,10 @@
             border-top: 1px dashed var(--secondary-text-color);
             font-size: 0.85rem;
             color: var(--secondary-text-color);
-            margin-top: 20px; /* Ensure space even if content-area is not full */
             user-select: none;
             text-align: right;
-            /* Make status bar stick to bottom of terminal-window */
-            margin-top: auto; /* Pushes status bar to bottom of flex container */
+            margin-top: auto; /* Pushes status bar to bottom of flex container (.terminal-window) */
+            flex-shrink: 0; /* Prevent shrinking */
         }
         .status-bar .connection-status {
             color: var(--accent-color);
@@ -325,44 +351,50 @@
             </div>
         </header>
 
-        <main class="content-area">
-            <form id="journalForm">
-                <input type="hidden" id="editingEntryId" value=""> <!-- To store ID of entry being edited -->
-
-                <div class="input-group">
-                    <label for="journalTitle">Journal Title</label>
-                    <span class="sr-only">Enter Journal Title</span>
-                    <input type="text" id="journalTitle" name="journalTitle" placeholder="System.Log.Subject..." required>
-                </div>
-
-                <div class="input-group">
-                    <label for="journalEntry">Your Thoughts</label>
-                    <span class="sr-only">Enter Journal Entry</span>
-                    <textarea id="journalEntry" name="journalEntry" placeholder="Booting consciousness...\nBegin data stream...\n\n" required></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit" id="saveButton" class="btn btn-primary">[ SAVE_SESSION ]</button>
-                    <button type="button" id="resetButton" class="btn btn-secondary">[ FLUSH_BUFFER ]</button>
-                </div>
-            </form>
-
-            <section id="previousEntriesSection">
+        <!-- Renamed .content-area to .main-layout-container and restructured its children -->
+        <div class="main-layout-container">
+            <!-- Sidebar for previous entries -->
+            <aside class="sidebar" id="previousEntriesSection">
                 <h2>Stored Logs</h2>
                 <ul id="journalEntriesList">
                     <!-- Entries will be populated here by JavaScript -->
                     <li class="loading-message">Loading previous entries...</li>
                 </ul>
-            </section>
-        </main>
+            </aside>
+
+            <!-- Main panel for the form -->
+            <main class="main-panel">
+                <form id="journalForm">
+                    <input type="hidden" id="editingEntryId" value=""> <!-- To store ID of entry being edited -->
+
+                    <div class="input-group">
+                        <label for="journalTitle">Journal Title</label>
+                        <span class="sr-only">Enter Journal Title</span>
+                        <input type="text" id="journalTitle" name="journalTitle" placeholder="System.Log.Subject..." required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="journalEntry">Your Thoughts</label>
+                        <span class="sr-only">Enter Journal Entry</span>
+                        <textarea id="journalEntry" name="journalEntry" placeholder="Booting consciousness...\nBegin data stream...\n\n" required></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" id="saveButton" class="btn btn-primary">[ SAVE_SESSION ]</button>
+                        <button type="button" id="resetButton" class="btn btn-secondary">[ FLUSH_BUFFER ]</button>
+                    </div>
+                </form>
+            </main>
+        </div>
+
         <footer class="status-bar">
             <span id="dateTime"></span> | <span class="connection-status">SECURE_CHANNEL::ESTABLISHED</span> | SYS_STATUS: OK
         </footer>
     </div>
 
     <script>
-        // const API_BASE_URL = 'http://localhost:8001/api/entries'; // Backend API URL
-        const API_BASE_URL = '/api/entries'; // Backend API URL
+         const API_BASE_URL = 'http://localhost:8001/api/entries'; // Backend API URL
+        // const API_BASE_URL = '/api/entries'; // Backend API URL
 
         const journalForm = document.getElementById('journalForm');
         const journalTitleInput = document.getElementById('journalTitle');
@@ -398,6 +430,7 @@
                 setTimeout(() => {
                     if (connectionStatusEl.textContent === connectionText) { // Only revert if not changed by another message
                          connectionStatusEl.textContent = "SECURE_CHANNEL::ESTABLISHED";
+                         connectionStatusEl.style.color = "var(--accent-color)"; // Revert to default accent color
                     }
                 }, 3000);
             }
@@ -444,8 +477,9 @@
                 journalEntriesList.innerHTML = ''; // Clear loading message or old entries
 
                 if (entries.length === 0) {
-                    journalEntriesList.innerHTML = '<li>No entries found in archive.</li>';
+                    journalEntriesList.innerHTML = '<li class="entry-item" style="justify-content:center;">No entries found in archive.</li>';
                 } else {
+                    entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by newest first
                     entries.forEach(entry => {
                         const listItem = document.createElement('li');
                         listItem.classList.add('entry-item');
@@ -471,7 +505,7 @@
                 updateStatus("Logs loaded.", "ARCHIVE_SYNC_OK", false);
             } catch (error) {
                 console.error('Failed to fetch entries:', error);
-                journalEntriesList.innerHTML = '<li>Error loading entries. Check connection.</li>';
+                journalEntriesList.innerHTML = '<li class="entry-item" style="color: var(--accent-color); justify-content:center;">Error loading entries. Check connection.</li>';
                 updateStatus("Failed to load logs.", "ARCHIVE_CONNECTION_ERROR", true);
             }
         }
@@ -528,12 +562,15 @@
 
         // Event delegation for load and delete buttons
         journalEntriesList.addEventListener('click', (event) => {
-            if (event.target.classList.contains('btn-load')) {
-                const entryId = event.target.dataset.id;
+            const loadButton = event.target.closest('.btn-load');
+            const deleteButton = event.target.closest('.btn-delete');
+
+            if (loadButton) {
+                const entryId = loadButton.dataset.id;
                 loadEntryForEditing(entryId);
             }
-            if (event.target.classList.contains('btn-delete')) {
-                const entryId = event.target.dataset.id;
+            if (deleteButton) {
+                const entryId = deleteButton.dataset.id;
                 deleteEntry(entryId);
             }
         });
@@ -567,8 +604,8 @@
                 if (response.ok) {
                     const resultEntry = await response.json(); // POST returns 201, PUT returns 200
                     const action = entryId ? "updated" : "saved";
-                    alert(`Entry "${resultEntry.title}" ${action} successfully! ID: ${resultEntry.id}`);
-                    updateStatus(`Entry ${action}.`, "TRANSMISSION_OK", false);
+                    // alert(`Entry "${resultEntry.title}" ${action} successfully! ID: ${resultEntry.id}`);
+                    updateStatus(`Entry "${resultEntry.title}" ${action}. ID: ${resultEntry.id}`, "TRANSMISSION_OK", false);
                     setFormForNewEntry();
                     fetchAndDisplayEntries(); // Refresh list
                 } else {
