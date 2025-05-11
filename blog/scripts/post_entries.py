@@ -6,6 +6,7 @@ import time # Optional: for adding delays
 # --- Configuration ---
 # The actual API endpoint URL for creating entries (based on your docs URL)
 API_URL = "http://localhost:8001/api/entries"
+API_URL = "https://vibecoding.onrender.com/api/entries"
 # The path to your JSON file containing the list of entries
 INPUT_JSON_FILE = "gemini_mindfulness.json"
 # Optional: Add a small delay between requests (in seconds)

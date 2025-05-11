@@ -11,7 +11,7 @@
             --primary-text-color: #00ff41; /* Bright green */
             --secondary-text-color: #33ff77; /* Slightly dimmer green */
             --border-color: #00cc33;
-            --accent-color: #ff00ff; /* A contrasting accent for fun (error/highlight) */
+            --accent-color: #ff00ff; /* A contrasting accent for fun */
             --cursor-color: var(--primary-text-color);
             --button-bg: transparent;
             --button-text: var(--primary-text-color);
@@ -20,10 +20,6 @@
             --font-family-mono: 'Consolas', 'Menlo', 'Courier New', 'Courier', monospace;
             --scanline-opacity: 0.07;
             --window-glow-color: rgba(0, 255, 65, 0.2);
-
-            /* Added for responsiveness */
-            --sidebar-width-large: 350px;
-            --sidebar-width-small: 100%; /* Will become full width when stacked */
         }
 
         /* --- BASE STYLES & RESET --- */
@@ -43,7 +39,6 @@
             align-items: flex-start; /* Changed from center to allow terminal to sit at top with padding */
             min-height: 100vh;
             padding: 20px;
-            overflow-y: auto; /* Allow body to scroll if window is smaller than terminal-window */
             overflow-x: hidden;
         }
 
@@ -72,13 +67,12 @@
             max-width: 1200px; /* Increased width for two-column layout */
             height: calc(100vh - 40px); /* Use available viewport height minus body padding */
             border: 2px solid var(--border-color);
-            background-color: rgba(10, 10, 10, 0.9); /* Slightly less transparent */
+            background-color: rgba(10, 10, 10, 0.85);
             box-shadow: 0 0 25px var(--window-glow-color),
                         inset 0 0 5px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             animation: fadeInTerminal 0.5s ease-out;
-            overflow: hidden; /* Important: Contains children, preventing them from overflowing */
         }
 
         @keyframes fadeInTerminal {
@@ -106,11 +100,6 @@
         .window-controls span {
             margin-left: 8px;
             cursor: default;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-        }
-        .window-controls span:hover {
-             opacity: 1;
         }
 
         /* --- MAIN LAYOUT CONTAINER (holds sidebar and main panel) --- */
@@ -123,7 +112,7 @@
 
         /* --- SIDEBAR (PREVIOUS ENTRIES) --- */
         .sidebar {
-            width: var(--sidebar-width-large);
+            width: 350px; /* Fixed width for readability */
             min-width: 300px; /* Minimum width */
             flex-shrink: 0; /* Prevent shrinking */
             border-right: 2px solid var(--border-color);
@@ -142,65 +131,45 @@
         }
         .sidebar h2::before {
             content: 'ARCHIVE:> ';
-            opacity: 0.8;
-            color: var(--secondary-text-color);
+            opacity: 0.7;
         }
 
         #journalEntriesList {
             list-style: none;
             padding: 0;
+            /* max-height: 300px; Removed, sidebar handles scroll */
+            /* overflow-y: auto; Removed, sidebar handles scroll */
+            /* border: 1px solid var(--secondary-text-color); Removed, sidebar has border */
+            /* padding: 10px; Removed, sidebar has padding */
+            /* background-color: rgba(0,0,0,0.2); Removed */
             flex-grow: 1; /* Allows list to take available space in sidebar */
-            overflow-y: hidden; /* Managed by parent .sidebar */
         }
 
         .entry-item {
             background-color: rgba(0,0,0,0.1);
-            border-bottom: 1px dashed var(--secondary-text-color); /* Dashed border looks more terminal */
+            border-bottom: 1px solid var(--secondary-text-color);
             padding: 10px 15px;
-            margin-bottom: 8px; /* Space between items */
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.2s, box-shadow 0.2s;
+            transition: background-color 0.2s;
             gap: 10px; /* Add gap between info and actions */
-            cursor: pointer; /* Indicate clickable area */
         }
-         .entry-item:last-child {
+        .entry-item:last-child {
             border-bottom: none;
-            margin-bottom: 0; /* No margin on the last item */
         }
         .entry-item:hover {
             background-color: rgba(0, 255, 65, 0.05);
-            box-shadow: inset 3px 0 0 var(--primary-text-color); /* Left border glow on hover */
         }
-        .entry-item.loading-message,
-        .entry-item.no-entries-message,
-        .entry-item.error-message {
-            cursor: default;
-            text-align: center;
-            justify-content: center;
-            font-style: italic;
-            padding: 20px;
-        }
-         .entry-item.error-message {
-             color: var(--accent-color);
-         }
-
-
         .entry-item-info {
             flex-grow: 1;
-            min-width: 0; /* Crucial: Allows flex item content (text) to wrap */
-            /* Make info area clickable */
-             cursor: pointer;
-             padding-right: 10px; /* Space between text and buttons */
+            min-width: 0; /* Allows text to wrap correctly in flex item */
         }
         .entry-item-title {
             font-weight: bold;
-            display: block; /* Ensures it takes its own line */
-            word-break: break-word; /* Essential for wrapping long words */
-            white-space: normal; /* Ensure wrapping happens */
-            overflow-wrap: break-word; /* Another property for wrapping */
-            margin-bottom: 4px; /* Space below title */
+            display: block;
+            word-break: break-word; /* Ensure long titles wrap */
         }
         .entry-item-date {
             font-size: 0.8rem;
@@ -208,17 +177,15 @@
             display: block;
         }
         .entry-item-actions {
-            display: flex; /* Keep buttons side-by-side */
-            flex-direction: row;
+            display: flex; /* Keep buttons side-by-side or stack if needed */
+            flex-direction: row; /* Default, but explicit */
             gap: 8px;
-            flex-shrink: 0; /* Prevent buttons from shrinking */
-            /* Buttons themselves handle clicks, don't make parent actions div clickable */
-            cursor: default;
+            flex-shrink: 0; /* Prevent buttons from shrinking too much */
         }
         .entry-item-actions button {
-            padding: 5px 8px; /* Smaller buttons for actions */
-            font-size: 0.8rem; /* Smaller font */
-            line-height: 1; /* Compact button */
+            /* margin-left: 10px; Replaced by gap */
+            padding: 5px 10px; /* Smaller buttons for actions */
+            font-size: 0.85rem;
         }
 
         /* --- MAIN CONTENT PANEL (JOURNAL FORM) --- */
@@ -248,20 +215,16 @@
             text-shadow: 0 0 5px var(--primary-text-color);
             display: flex;
             align-items: center;
-            user-select: none;
         }
         .input-group label::before {
-            content: 'PROMPT:> '; /* More explicit prompt */
+            content: '>';
             margin-right: 8px;
-            color: var(--secondary-text-color); /* Use a different shade */
             animation: blinkPrompt 1.5s infinite steps(1, end);
         }
 
         @keyframes blinkPrompt {
-            0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
-
 
         input[type="text"],
         textarea {
@@ -275,24 +238,18 @@
             outline: none;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             resize: vertical;
-            /* Remove default styling */
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
         }
 
         input[type="text"]:focus,
         textarea:focus {
             border-color: var(--primary-text-color);
             box-shadow: 0 0 10px var(--window-glow-color);
-            background-color: rgba(0,0,0,0.4); /* Slightly darker on focus */
         }
 
         textarea {
             min-height: 250px; /* Increased min-height */
             flex-grow: 1; /* Allow textarea to expand and fill space */
             line-height: 1.8;
-            white-space: pre-wrap; /* Preserve line breaks from user input */
         }
 
         /* --- BUTTON STYLING --- */
@@ -300,8 +257,8 @@
             display: flex;
             gap: 15px;
             padding-top: 10px; /* Spacing above buttons */
+            margin-top: 0; /* No longer margin-top:auto here, form structure handles it */
             flex-shrink: 0; /* Prevent button group from shrinking */
-             flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
         }
 
         .btn {
@@ -314,91 +271,59 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
             text-shadow: 0 0 3px var(--button-text);
-            user-select: none;
-            /* Add vintage effect */
-            filter: brightness(1) contrast(1);
-            box-shadow: 0 0 5px var(--border-color);
         }
 
         .btn:hover, .btn:focus {
             background-color: var(--button-hover-bg);
             color: var(--button-hover-text);
-            box-shadow: 0 0 15px var(--button-hover-bg), inset 0 0 5px var(--button-hover-text); /* Stronger hover glow */
+            box-shadow: 0 0 10px var(--button-hover-bg);
             outline: none;
             transform: translateY(-1px);
-             filter: brightness(1.2) contrast(1.1); /* Slight glow effect */
         }
         .btn:active {
             transform: translateY(1px);
-             box-shadow: 0 0 5px var(--button-hover-bg); /* Less glow when pressed */
-             filter: brightness(0.9) contrast(1.2);
         }
 
-        .btn-primary { /* Save/Update button - uses default colors */ }
+        .btn-primary { /* Save/Update button */ }
         .btn-secondary { /* Reset button / Load button */
             border-color: var(--secondary-text-color);
             color: var(--secondary-text-color);
             text-shadow: 0 0 3px var(--secondary-text-color);
-            box-shadow: 0 0 5px var(--secondary-text-color);
         }
         .btn-secondary:hover, .btn-secondary:focus {
             background-color: var(--secondary-text-color);
             color: var(--bg-color);
-            box-shadow: 0 0 15px var(--secondary-text-color), inset 0 0 5px var(--bg-color);
+            box-shadow: 0 0 10px var(--secondary-text-color);
         }
         .btn-danger { /* Delete button */
             border-color: var(--accent-color);
             color: var(--accent-color);
             text-shadow: 0 0 3px var(--accent-color);
-            box-shadow: 0 0 5px var(--accent-color);
         }
         .btn-danger:hover, .btn-danger:focus {
             background-color: var(--accent-color);
             color: var(--bg-color);
-            box-shadow: 0 0 15px var(--accent-color), inset 0 0 5px var(--bg-color);
+            box-shadow: 0 0 10px var(--accent-color);
         }
 
         /* --- STATUS BAR --- */
         .status-bar {
             padding: 8px 10px;
-            background-color: rgba(0,0,0,0.3); /* Darker background */
+            background-color: rgba(0,0,0,0.2);
             border-top: 1px dashed var(--secondary-text-color);
             font-size: 0.85rem;
             color: var(--secondary-text-color);
             user-select: none;
-            text-align: left; /* Align left */
-            display: flex; /* Use flex for layout */
-            justify-content: space-between; /* Space out sections */
-            flex-wrap: wrap; /* Allow wrapping if needed */
-            gap: 10px; /* Space between items if they wrap */
+            text-align: right;
             margin-top: auto; /* Pushes status bar to bottom of flex container (.terminal-window) */
             flex-shrink: 0; /* Prevent shrinking */
         }
-        .status-bar span {
-             flex-shrink: 0; /* Prevent individual items from shrinking */
-        }
-        .status-bar .system-info {
-             margin-right: auto; /* Pushes other items to the right */
-        }
         .status-bar .connection-status {
-            color: var(--accent-color); /* Default accent color */
+            color: var(--accent-color);
             font-weight: bold;
-            transition: color 0.3s ease; /* Smooth color transition */
         }
-        .status-bar .connection-status.status-ok {
-             color: var(--primary-text-color); /* Green for OK */
-        }
-         .status-bar .connection-status.status-error {
-             color: var(--accent-color); /* Red/Magenta for error */
-              animation: pulseError 1s infinite alternate;
-         }
-
-         @keyframes pulseError {
-             from { opacity: 1; text-shadow: 0 0 5px var(--accent-color); }
-             to { opacity: 0.7; text-shadow: none; }
-         }
 
         /* --- UTILITY --- */
         .sr-only { /* Screen-reader only */
@@ -412,95 +337,6 @@
             white-space: nowrap;
             border-width: 0;
         }
-
-        /* --- RESPONSIVE DESIGN --- */
-        @media (max-width: 900px) {
-            .terminal-window {
-                max-width: 95%; /* Adjust max-width for smaller screens */
-                height: auto; /* Let height adjust based on content, allow body scroll */
-                min-height: calc(100vh - 40px); /* Ensure it's at least full viewport height */
-            }
-
-            .main-layout-container {
-                flex-direction: column; /* Stack sidebar and main panel */
-            }
-
-            .sidebar {
-                width: var(--sidebar-width-small); /* Full width */
-                min-width: auto; /* Remove min-width constraint */
-                border-right: none; /* Remove right border */
-                border-bottom: 2px solid var(--border-color); /* Add bottom border */
-                max-height: 40vh; /* Limit sidebar height when stacked */
-                flex-shrink: 1; /* Allow shrinking */
-            }
-
-            .main-panel {
-                 width: 100%; /* Full width */
-                 min-height: 50vh; /* Ensure main panel has minimum height */
-                 flex-grow: 1; /* Allow growth */
-            }
-
-             .button-group {
-                 flex-direction: column; /* Stack buttons */
-                 gap: 10px; /* Smaller gap when stacked */
-             }
-
-             .btn {
-                 width: 100%; /* Full width buttons */
-                 text-align: center;
-             }
-
-             .entry-item {
-                 flex-direction: column; /* Stack title/date and actions */
-                 align-items: flex-start; /* Align stacked items to the start */
-             }
-             .entry-item-info {
-                 width: 100%; /* Make info take full width */
-                 margin-bottom: 10px; /* Space between info and actions */
-                 padding-right: 0; /* Remove right padding */
-             }
-              .entry-item-actions {
-                 width: 100%; /* Make actions take full width */
-                 justify-content: flex-end; /* Align buttons to the right */
-                 gap: 5px; /* Smaller gap between stacked buttons */
-             }
-              .entry-item-actions button {
-                  flex-grow: 1; /* Allow buttons to grow/shrink within their container */
-                  min-width: 80px; /* Minimum width for buttons */
-                  text-align: center;
-              }
-
-             .status-bar {
-                 text-align: center; /* Center status text */
-                 justify-content: center; /* Center items if space allows */
-             }
-              .status-bar .system-info {
-                  margin-right: 0; /* Remove margin */
-                  width: 100%; /* Take full width if needed */
-              }
-
-        }
-
-         /* Optional: Custom scrollbar style */
-         ::-webkit-scrollbar {
-             width: 10px;
-             height: 10px;
-         }
-
-         ::-webkit-scrollbar-track {
-             background: var(--bg-color);
-             border-left: 1px solid var(--border-color);
-         }
-
-         ::-webkit-scrollbar-thumb {
-             background: var(--border-color);
-             border: 1px solid var(--bg-color);
-         }
-
-         ::-webkit-scrollbar-thumb:hover {
-             background: var(--primary-text-color);
-         }
-
     </style>
 </head>
 <body>
@@ -515,13 +351,14 @@
             </div>
         </header>
 
+        <!-- Renamed .content-area to .main-layout-container and restructured its children -->
         <div class="main-layout-container">
             <!-- Sidebar for previous entries -->
             <aside class="sidebar" id="previousEntriesSection">
                 <h2>Stored Logs</h2>
                 <ul id="journalEntriesList">
                     <!-- Entries will be populated here by JavaScript -->
-                    <li class="entry-item loading-message">Loading previous entries...</li>
+                    <li class="loading-message">Loading previous entries...</li>
                 </ul>
             </aside>
 
@@ -545,21 +382,19 @@
                     <div class="button-group">
                         <button type="submit" id="saveButton" class="btn btn-primary">[ SAVE_SESSION ]</button>
                         <button type="button" id="resetButton" class="btn btn-secondary">[ FLUSH_BUFFER ]</button>
-                        <!-- Delete button is added by JS when editing -->
-                        <!-- <button type="button" id="deleteButton" class="btn btn-danger">[ DELETE_LOG ]</button> -->
                     </div>
                 </form>
             </main>
         </div>
 
         <footer class="status-bar">
-            <span class="system-info"><span id="dateTime"></span> | SYS_STATUS: OK</span>
-            <span class="connection-status" id="connectionStatus">SECURE_CHANNEL::ESTABLISHED</span>
+            <span id="dateTime"></span> | <span class="connection-status">SECURE_CHANNEL::ESTABLISHED</span> | SYS_STATUS: OK
         </footer>
     </div>
 
     <script>
-        const API_BASE_URL = 'http://localhost:8001/api/entries'; // Backend API URL
+         const API_BASE_URL = 'http://localhost:8001/api/entries'; // Backend API URL
+        // const API_BASE_URL = '/api/entries'; // Backend API URL
 
         const journalForm = document.getElementById('journalForm');
         const journalTitleInput = document.getElementById('journalTitle');
@@ -568,92 +403,43 @@
         const saveButton = document.getElementById('saveButton');
         const resetButton = document.getElementById('resetButton');
         const journalEntriesList = document.getElementById('journalEntriesList');
-        const dateTimeEl = document.getElementById('dateTime');
-        const connectionStatusEl = document.getElementById('connectionStatus');
-        const buttonGroup = journalForm.querySelector('.button-group'); // Get the button group
-
-        let deleteButton = null; // Keep track of the delete button
+        const statusBar = document.querySelector('.status-bar');
+        const connectionStatusEl = statusBar.querySelector('.connection-status');
 
         // --- Form State & UI Update ---
         function setFormForNewEntry() {
             journalForm.reset();
             editingEntryIdInput.value = '';
             saveButton.textContent = '[ SAVE_SESSION ]';
-            saveButton.classList.remove('btn-secondary'); // Ensure it's primary style
-            saveButton.classList.add('btn-primary');
-
-            // Remove delete button if it exists
-            if (deleteButton && buttonGroup.contains(deleteButton)) {
-                buttonGroup.removeChild(deleteButton);
-                deleteButton = null; // Reset the reference
-            }
-
             journalTitleInput.focus();
-            updateStatus("Ready for new entry.", "SECURE_CHANNEL::ESTABLISHED", false);
         }
-
-        function setFormForEditingEntry(entry) {
-            journalTitleInput.value = entry.title;
-            journalEntryTextarea.value = entry.content;
-            editingEntryIdInput.value = entry.id;
-            saveButton.textContent = '[ UPDATE_SESSION ]';
-            saveButton.classList.remove('btn-primary'); // Maybe style update differently? Or keep primary?
-            saveButton.classList.add('btn-secondary'); // Example: Use secondary style for update
-
-            // Add delete button if it doesn't exist
-            if (!deleteButton) {
-                deleteButton = document.createElement('button');
-                deleteButton.type = 'button';
-                deleteButton.id = 'deleteButton';
-                deleteButton.classList.add('btn', 'btn-danger');
-                deleteButton.textContent = '[ DELETE_LOG ]';
-                buttonGroup.appendChild(deleteButton); // Add it after the reset button
-                deleteButton.addEventListener('click', () => deleteEntry(editingEntryIdInput.value));
-            }
-
-            journalTitleInput.focus();
-             updateStatus(`Entry "${entry.title}" loaded for editing.`, "DATA_LOADED_OK", false);
-        }
-
 
         resetButton.addEventListener('click', () => {
             setFormForNewEntry();
             updateStatus("Buffer flushed. Ready for new entry.", "SECURE_CHANNEL::ESTABLISHED", false);
         });
-
-        // --- Status Bar Update ---
+        
         function updateStatus(message, connectionText, isError = false) {
             console.log(isError ? "Error:" : "Status:", message);
-
-            // Update connection status text and color/animation
             if (connectionStatusEl) {
                 connectionStatusEl.textContent = connectionText;
-                connectionStatusEl.classList.remove('status-ok', 'status-error'); // Reset classes
-
-                if (isError) {
-                     connectionStatusEl.classList.add('status-error');
-                } else {
-                     connectionStatusEl.classList.add('status-ok');
-                }
+                connectionStatusEl.style.color = isError ? "var(--accent-color)" : "var(--accent-color)"; // Or specific error color
             }
-
-            // Optional: Revert status bar after a delay for non-error messages
+             // Optional: Revert status bar after a delay for non-error messages
             if (!isError) {
-                 const revertDelay = 3000; // 3 seconds
-                 setTimeout(() => {
-                     // Only revert if the current status text hasn't changed since this timeout was set
-                     if (connectionStatusEl.textContent === connectionText) {
+                setTimeout(() => {
+                    if (connectionStatusEl.textContent === connectionText) { // Only revert if not changed by another message
                          connectionStatusEl.textContent = "SECURE_CHANNEL::ESTABLISHED";
-                         connectionStatusEl.classList.remove('status-ok', 'status-error');
-                          connectionStatusEl.style.color = ""; // Revert to CSS variable default
-                     }
-                 }, revertDelay);
+                         connectionStatusEl.style.color = "var(--accent-color)"; // Revert to default accent color
+                    }
+                }, 3000);
             }
         }
 
 
         // --- Date/Time Update ---
         function updateDateTime() {
+            const dateTimeEl = document.getElementById('dateTime');
             if (dateTimeEl) {
                 const now = new Date();
                 const dateString = now.toLocaleDateString(undefined, {year: '2-digit', month: '2-digit', day: '2-digit'});
@@ -662,43 +448,36 @@
             }
         }
         setInterval(updateDateTime, 1000);
-        updateDateTime(); // Initial call
+        updateDateTime();
 
-        // --- Placeholder Enhancement ---
+        // --- Placeholder Enhancement (Optional) ---
         const initialPlaceholder = "Booting consciousness...\nBegin data stream...\n\n";
         if (journalEntryTextarea) {
             journalEntryTextarea.addEventListener('focus', function() {
-                 // Keep placeholder visible for terminal effect
-                 // if (this.value === '' && this.placeholder === initialPlaceholder) {
-                 //     this.placeholder = '';
-                 // }
+                if (this.value === '' && this.placeholder === initialPlaceholder) {
+                    // this.placeholder = ''; // Optionally clear while typing, or leave for effect
+                }
             });
             journalEntryTextarea.addEventListener('blur', function() {
                 if (this.value === '') {
                     this.placeholder = initialPlaceholder;
                 }
             });
-             // Ensure placeholder is set initially
-             if (journalEntryTextarea.value === '') {
-                 journalEntryTextarea.placeholder = initialPlaceholder;
-             }
         }
-
 
         // --- Fetch and Display Entries ---
         async function fetchAndDisplayEntries() {
-            journalEntriesList.innerHTML = '<li class="entry-item loading-message">ACCESSING_ARCHIVE...</li>'; // Show loading state
             updateStatus("Fetching logs...", "CONNECTING_ARCHIVE...", false);
             try {
                 const response = await fetch(API_BASE_URL);
                 if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
                 }
                 const entries = await response.json();
                 journalEntriesList.innerHTML = ''; // Clear loading message or old entries
 
                 if (entries.length === 0) {
-                    journalEntriesList.innerHTML = '<li class="entry-item no-entries-message">NO_LOGS_FOUND.</li>';
+                    journalEntriesList.innerHTML = '<li class="entry-item" style="justify-content:center;">No entries found in archive.</li>';
                 } else {
                     entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by newest first
                     entries.forEach(entry => {
@@ -710,15 +489,14 @@
                             year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                         });
 
-                        // The structure for wrapping is already good, ensuring flex-grow and min-width:0 on info
                         listItem.innerHTML = `
-                            <div class="entry-item-info" data-id="${entry.id}">
+                            <div class="entry-item-info">
                                 <span class="entry-item-title">${entry.title}</span>
                                 <span class="entry-item-date">Created: ${entryDate}</span>
                             </div>
                             <div class="entry-item-actions">
                                 <button class="btn btn-secondary btn-load" data-id="${entry.id}">[ LOAD ]</button>
-                                <button class="btn btn-danger btn-delete" data-id="${entry.id}">[ DEL ]</button> <!-- Abbreviated DEL -->
+                                <button class="btn btn-danger btn-delete" data-id="${entry.id}">[ DELETE ]</button>
                             </div>
                         `;
                         journalEntriesList.appendChild(listItem);
@@ -727,44 +505,36 @@
                 updateStatus("Logs loaded.", "ARCHIVE_SYNC_OK", false);
             } catch (error) {
                 console.error('Failed to fetch entries:', error);
-                journalEntriesList.innerHTML = `<li class="entry-item error-message">ERROR_FETCHING_LOGS:<br>${error.message}</li>`;
+                journalEntriesList.innerHTML = '<li class="entry-item" style="color: var(--accent-color); justify-content:center;">Error loading entries. Check connection.</li>';
                 updateStatus("Failed to load logs.", "ARCHIVE_CONNECTION_ERROR", true);
             }
         }
 
         // --- Load Entry for Editing ---
         async function loadEntryForEditing(entryId) {
-             // Visually indicate which item is selected? Maybe add a class.
-             document.querySelectorAll('.entry-item').forEach(item => {
-                 item.style.borderLeft = 'none'; // Remove glow from all items
-                 if (item.dataset.id === entryId.toString()) {
-                      item.style.borderLeft = '3px solid var(--primary-text-color)'; // Add glow to selected
-                 }
-             });
-
             updateStatus(`Loading entry ID: ${entryId}...`, "FETCHING_DATA...", false);
             try {
                 const response = await fetch(`${API_BASE_URL}/${entryId}`);
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch entry: ${response.status} ${response.statusText}`);
+                    throw new Error(`Failed to fetch entry: ${response.statusText}`);
                 }
                 const entry = await response.json();
-                setFormForEditingEntry(entry); // Use the new helper function
-
+                journalTitleInput.value = entry.title;
+                journalEntryTextarea.value = entry.content;
+                editingEntryIdInput.value = entry.id;
+                saveButton.textContent = '[ UPDATE_SESSION ]';
+                journalTitleInput.focus();
+                updateStatus(`Entry "${entry.title}" loaded for editing.`, "DATA_LOADED_OK", false);
             } catch (error) {
                 console.error('Error loading entry:', error);
-                // alert(`Error loading entry: ${error.message}`); // Avoid disruptive alerts
-                updateStatus(`Error loading entry: ${error.message}`, "FETCH_ERROR", true);
-                setFormForNewEntry(); // Revert form state on error
+                alert(`Error loading entry: ${error.message}`);
+                updateStatus("Error loading entry.", "FETCH_ERROR", true);
             }
         }
 
         // --- Delete Entry ---
         async function deleteEntry(entryId) {
-            // Use a more terminal-like confirmation
-            const confirmDelete = prompt(`SYSTEM_CONFIRMATION:\nType "DELETE" to permanently remove log ID ${entryId}:`);
-            if (confirmDelete !== 'DELETE') {
-                updateStatus("Deletion cancelled.", "OPERATION_ABORTED", false);
+            if (!confirm('SYSTEM_CONFIRMATION: Permanently delete this journal entry? This action cannot be undone.')) {
                 return;
             }
             updateStatus(`Deleting entry ID: ${entryId}...`, "SENDING_DELETE_CMD...", false);
@@ -772,7 +542,7 @@
                 const response = await fetch(`${API_BASE_URL}/${entryId}`, { method: 'DELETE' });
                 if (!response.ok) { // 204 No Content is also OK
                     if (response.status === 204) {
-                       // Successfully deleted
+                        // Successfully deleted
                     } else {
                        const errorData = await response.json().catch(() => ({ detail: response.statusText }));
                        throw new Error(errorData.detail || `HTTP error ${response.status}`);
@@ -780,67 +550,49 @@
                 }
                 updateStatus(`Entry ID: ${entryId} deleted.`, "DELETE_CMD_OK", false);
                 fetchAndDisplayEntries(); // Refresh list
-
-                // If deleted entry was being edited, clear the form
-                if (editingEntryIdInput.value === entryId.toString()) {
+                if (editingEntryIdInput.value === entryId.toString()) { // If deleted entry was being edited
                     setFormForNewEntry();
                 }
             } catch (error) {
                 console.error('Error deleting entry:', error);
-                // alert(`Error deleting entry: ${error.message}`); // Avoid disruptive alerts
-                updateStatus(`Error deleting entry: ${error.message}`, "DELETE_CMD_FAIL", true);
+                alert(`Error deleting entry: ${error.message}`);
+                updateStatus("Error deleting entry.", "DELETE_CMD_FAIL", true);
             }
         }
 
-        // Event delegation for load and delete buttons AND the info area
+        // Event delegation for load and delete buttons
         journalEntriesList.addEventListener('click', (event) => {
             const loadButton = event.target.closest('.btn-load');
             const deleteButton = event.target.closest('.btn-delete');
-            const entryInfo = event.target.closest('.entry-item-info'); // Listen for clicks on the info div
 
             if (loadButton) {
                 const entryId = loadButton.dataset.id;
                 loadEntryForEditing(entryId);
-            } else if (deleteButton) {
+            }
+            if (deleteButton) {
                 const entryId = deleteButton.dataset.id;
                 deleteEntry(entryId);
-            } else if (entryInfo) { // If info area is clicked, load the entry
-                 const entryId = entryInfo.dataset.id;
-                 loadEntryForEditing(entryId);
             }
         });
 
         // --- Form Submission (Create or Update) ---
         journalForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-            const title = journalTitleInput.value.trim(); // Trim whitespace
-            const content = journalEntryTextarea.value.trim();
-
-            if (!title || !content) {
-                 updateStatus("Title or content is empty.", "INPUT_ERROR", true);
-                 return; // Prevent submission if fields are empty after trimming
-            }
-
+            const title = journalTitleInput.value;
+            const content = journalEntryTextarea.value;
             const entryId = editingEntryIdInput.value;
 
             const data = { title, content };
             let url = API_BASE_URL;
             let method = 'POST';
-            let statusMessage = 'Saving new entry...';
-            let statusConnecting = 'SENDING_DATA...';
-            let successMessage = 'Entry saved.';
-            let errorMessage = 'Error saving entry.';
 
             if (entryId) {
                 url += `/${entryId}`;
                 method = 'PUT';
-                statusMessage = `Updating entry ID: ${entryId}...`;
-                statusConnecting = 'SENDING_UPDATE...';
-                successMessage = 'Entry updated.';
-                errorMessage = 'Error updating entry.';
+                updateStatus(`Updating entry ID: ${entryId}...`, "SENDING_UPDATE...", false);
+            } else {
+                updateStatus("Saving new entry...", "SENDING_DATA...", false);
             }
-
-            updateStatus(statusMessage, statusConnecting, false);
 
             try {
                 const response = await fetch(url, {
@@ -851,27 +603,28 @@
 
                 if (response.ok) {
                     const resultEntry = await response.json(); // POST returns 201, PUT returns 200
-                    // alert(`${successMessage} "${resultEntry.title}". ID: ${resultEntry.id}`); // Avoid alert
-                    updateStatus(`${successMessage} "${resultEntry.title}". ID: ${resultEntry.id}`, "TRANSMISSION_OK", false);
-                    setFormForNewEntry(); // Reset form after successful save/update
+                    const action = entryId ? "updated" : "saved";
+                    // alert(`Entry "${resultEntry.title}" ${action} successfully! ID: ${resultEntry.id}`);
+                    updateStatus(`Entry "${resultEntry.title}" ${action}. ID: ${resultEntry.id}`, "TRANSMISSION_OK", false);
+                    setFormForNewEntry();
                     fetchAndDisplayEntries(); // Refresh list
                 } else {
                     const errorData = await response.json().catch(() => ({ detail: response.statusText }));
                     console.error('Error saving entry:', response.status, errorData);
-                    // alert(`${errorMessage}: ${errorData.detail || response.statusText}`); // Avoid alert
-                    updateStatus(`${errorMessage}: ${errorData.detail || response.statusText}`, "TRANSMISSION_ERROR", true);
+                    alert(`Error: ${errorData.detail || response.statusText}`);
+                    updateStatus(`Error ${entryId ? "updating" : "saving"}.`, "TRANSMISSION_ERROR", true);
                 }
             } catch (error) {
                 console.error('Network error or backend down:', error);
-                // alert('Failed to connect to the journal service. Is it running?'); // Avoid alert
-                updateStatus(`Connection failed: ${error.message}. Is backend running?`, "CONNECTION_LOST", true);
+                alert('Failed to connect to the journal service. Is it running?');
+                updateStatus("Connection failed.", "CONNECTION_LOST", true);
             }
         });
 
         // --- Initial Load ---
         document.addEventListener('DOMContentLoaded', () => {
             fetchAndDisplayEntries();
-            journalTitleInput.focus(); // Set focus to title input on load
+            journalTitleInput.focus();
         });
 
     </script>
